@@ -294,22 +294,58 @@
 
         /* GLOBAL MINIGAME HEADER */
         .game-header {
-            position: absolute; top: 15px; left: 15px; right: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 2500; pointer-events: all;
+            position: fixed;
+            top: max(12px, env(safe-area-inset-top, 12px));
+            left: max(12px, env(safe-area-inset-left, 12px));
+            right: max(12px, env(safe-area-inset-right, 12px));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 20000;
+            pointer-events: none;
         }
         .close-game-btn {
-            background: rgba(230, 57, 70, 0.9); color: white;
-            border: 2px solid white; padding: 8px 16px; border-radius: 20px;
-            font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            font-family: 'Courier New', monospace; font-size: 1.1rem;
-            transition: transform 0.1s;
+            background: rgba(230, 57, 70, 0.95);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.05rem;
+            transition: transform 0.1s, background-color 0.15s;
+            pointer-events: auto !important;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 48px;
+            min-width: 100px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            z-index: 20001;
         }
-        .close-game-btn:active { transform: scale(0.95); }
+        .close-game-btn:hover { background: rgba(217, 40, 54, 1); transform: translateY(-1px); }
+        .close-game-btn:active { transform: scale(0.95); background: #b71c1c; }
         .game-year-display {
-            font-size: 2.5rem; font-weight: bold; color: white;
+            font-size: clamp(1.8rem, 5vw, 2.5rem); font-weight: bold; color: white;
             text-shadow: 2px 2px 0px #111, -1px -1px 0 #111, 1px -1px 0 #111, -1px 1px 0 #111, 1px 1px 0 #111;
             font-family: 'Playfair Display', serif;
+            pointer-events: auto;
+            user-select: none;
+        }
+
+        /* OVERLAY BASE VISIBILITY AND CLICK SHIELD */
+        .game-overlay, [class*="game-overlay-"] {
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .game-overlay.active, [class*="game-overlay-"].active {
+            visibility: visible;
+            pointer-events: all;
         }
 
         /* 1951 MINIGAME OVERLAY CSS */
@@ -323,6 +359,7 @@
             justify-content: center;
             opacity: 0;
             pointer-events: none;
+            visibility: hidden;
             transition: opacity 0.4s ease;
             overflow: hidden;
             background: #000;
@@ -330,6 +367,7 @@
         .game-overlay.active {
             opacity: 1;
             pointer-events: all;
+            visibility: visible;
         }
         .bg-static {
             position: absolute;
@@ -413,57 +451,67 @@
             top: 50%; left: 50%;
             transform: translate(-50%, -50%) scale(0.8);
             background: #f4ecd8; /* Retro beige */
-            border: 8px solid #333;
-            padding: 40px;
-            width: 90%;
-            max-width: 600px;
-            z-index: 20;
+            border: 6px solid #333;
+            padding: 30px 20px;
+            width: 92%;
+            max-width: 520px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+            z-index: 10050;
             text-align: center;
-            box-shadow: 20px 20px 0px rgba(0,0,0,0.5);
+            box-shadow: 15px 15px 0px rgba(0,0,0,0.5);
             opacity: 0;
             pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .retro-modal.active {
             opacity: 1;
             pointer-events: all;
+            visibility: visible;
             transform: translate(-50%, -50%) scale(1);
         }
         .retro-modal h2 {
             font-family: 'Playfair Display', serif;
             color: #222;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            margin-bottom: 15px;
         }
         .retro-modal .quote {
             font-family: 'Courier New', Courier, monospace;
             color: #444;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
+            font-size: clamp(0.9rem, 3.5vw, 1.05rem);
+            line-height: 1.5;
+            margin-bottom: 25px;
             font-style: italic;
             background: rgba(0,0,0,0.05);
-            padding: 20px;
+            padding: 15px;
             border-left: 4px solid #333;
             text-align: left;
         }
         .retro-btn {
             background: #333;
             color: #fff;
-            border: 4px solid #111;
-            padding: 15px 30px;
-            font-size: 1.2rem;
+            border: 3px solid #111;
+            padding: 12px 24px;
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
             font-family: 'Courier New', Courier, monospace;
             text-transform: uppercase;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.3);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+            touch-action: manipulation;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         .retro-btn:hover {
             background: #555;
             transform: translate(-2px, -2px);
-            box-shadow: 7px 7px 0px rgba(0,0,0,0.3);
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.3);
         }
         .retro-btn:active {
             transform: translate(3px, 3px);
@@ -545,19 +593,22 @@
         }
         .score-board-1952 {
             position: absolute;
-            top: 30px;
+            top: 70px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.95);
             color: #111;
-            padding: 15px 30px;
+            padding: 8px 20px;
             border-radius: 30px;
             font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
+            font-size: clamp(0.95rem, 3.5vw, 1.3rem);
             font-weight: bold;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             z-index: 110;
-            white-space: nowrap;
+            max-width: 90vw;
+            box-sizing: border-box;
+            text-align: center;
+            pointer-events: none;
         }
 
         /* 1953 MINIGAME OVERLAY CSS */
@@ -575,30 +626,32 @@
         }
         @keyframes rainDrop { 0% { background-position: 0 0; } 100% { background-position: -20px 40px; } }
         .game-ui-1953 {
-            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 20px; z-index: 10; width: 90%; max-width: 600px; justify-content: center;
+            position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 15px; z-index: 10; width: 90%; max-width: 500px; justify-content: center;
+            pointer-events: none;
         }
         .status-box-1953 {
-            background: rgba(0,0,0,0.7); color: #E2E8F0; padding: 12px 20px;
-            border-radius: 8px; font-family: 'Courier New', monospace; font-size: 1.1rem;
+            background: rgba(0,0,0,0.7); color: #E2E8F0; padding: 8px 16px;
+            border-radius: 8px; font-family: 'Courier New', monospace; font-size: clamp(0.9rem, 3vw, 1.1rem);
             border: 1px solid #475569; text-align: center; font-weight: bold;
         }
         .status-box-1953.danger { color: #E63946; border-color: #E63946; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .dike-container-1953 {
             position: relative; z-index: 5; background: #3c4a3f;
-            padding: 25px; border-radius: 20px;
+            padding: clamp(12px, 3vw, 25px); border-radius: 20px;
             box-shadow: inset 0 10px 30px rgba(0,0,0,0.7), 0 20px 50px rgba(0,0,0,0.9);
             border: 4px solid #2a342c; transition: opacity 0.3s ease;
+            margin-top: 70px; max-width: 95vw; box-sizing: border-box;
         }
         .dike-grid-1953 {
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(8px, 2vw, 15px);
         }
         .dike-hole {
-            width: 70px; height: 70px; background: #2a342c;
+            width: clamp(44px, 14vw, 70px); height: clamp(44px, 14vw, 70px); background: #2a342c;
             border-radius: 50%; border: 3px solid #1c241e;
             box-shadow: inset 0 5px 15px rgba(0,0,0,0.6);
-            cursor: pointer; transition: all 0.1s;
+            cursor: pointer; transition: all 0.1s; touch-action: manipulation;
         }
         .dike-hole.leak {
             background: radial-gradient(circle, #3498DB, #2980B9);
@@ -641,9 +694,9 @@
         @keyframes flashFail { 0% { background-color: rgba(230,57,70,0.5); } 100% { background-color: transparent; } }
 
         .goal-1954 {
-            position: absolute; top: 15%; left: 50%; transform: translateX(-50%);
-            width: 300px; height: 150px;
-            border: 8px solid white; border-bottom: none;
+            position: absolute; top: clamp(70px, 14vh, 120px); left: 50%; transform: translateX(-50%);
+            width: clamp(220px, 60vw, 300px); height: clamp(90px, 18vh, 140px);
+            border: 6px solid white; border-bottom: none;
             background: rgba(255,255,255,0.1);
             background-image: linear-gradient(45deg, white 25%, transparent 25%, transparent 75%, white 75%, white),
                               linear-gradient(45deg, white 25%, transparent 25%, transparent 75%, white 75%, white);
@@ -652,13 +705,13 @@
         }
         
         .game-ui-1954 {
-            position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 600px; z-index: 10;
-            display: flex; flex-direction: column; align-items: center; gap: 30px;
+            position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 500px; z-index: 10;
+            display: flex; flex-direction: column; align-items: center; gap: clamp(12px, 3vh, 25px);
         }
         
         .timing-meter-1954 {
-            width: 100%; height: 50px; background: rgba(0,0,0,0.6);
+            width: 100%; height: clamp(36px, 6vh, 48px); background: rgba(0,0,0,0.6);
             border-radius: 25px; position: relative; overflow: hidden;
             border: 3px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
             cursor: default;
@@ -679,9 +732,10 @@
         }
         
         .score-1954 {
-            background: white; color: #111; padding: 15px 30px;
+            background: white; color: #111; padding: 10px 24px;
             border-radius: 30px; font-family: 'Playfair Display', serif;
-            font-size: 1.5rem; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: clamp(1rem, 3.5vw, 1.4rem); font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            pointer-events: none;
         }
         
         /* 1955 MINIGAME OVERLAY CSS */
@@ -695,32 +749,34 @@
         .game-overlay-1955.active { opacity: 1; pointer-events: all; }
         
         .game-ui-1955 {
-            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
-            z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 15px;
+            position: absolute; top: 65px; left: 50%; transform: translateX(-50%);
+            z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 10px;
+            pointer-events: none;
         }
         
         .coloring-grid-container-1955 {
             display: grid; grid-template-columns: repeat(9, 1fr); 
-            width: 90%; max-width: 400px;
-            gap: 2px; background: #111; padding: 4px; border: 6px solid #111;
-            margin-top: 60px; justify-content: center; border-radius: 4px;
+            width: 90%; max-width: min(340px, 80vw);
+            gap: 2px; background: #111; padding: 4px; border: 4px solid #111;
+            margin-top: 85px; justify-content: center; border-radius: 4px;
         }
         .coloring-cell-1955 {
             aspect-ratio: 1;
             background: white; cursor: pointer;
             transition: transform 0.1s;
+            touch-action: manipulation;
         }
         .coloring-cell-1955.black-cell {
             background: #111; pointer-events: none;
         }
 
         .palette-1955 {
-            display: flex; gap: 15px; margin-top: 30px;
+            display: flex; gap: 12px; margin-top: 20px;
         }
         .color-btn-1955 {
-            width: 50px; height: 50px; border-radius: 50%;
-            border: 4px solid #111; cursor: pointer;
-            transition: transform 0.2s;
+            width: 44px; height: 44px; border-radius: 50%;
+            border: 3px solid #111; cursor: pointer;
+            transition: transform 0.2s; touch-action: manipulation;
         }
         .color-btn-1955.active { transform: scale(1.2); box-shadow: 0 0 10px rgba(0,0,0,0.3); }
 
@@ -734,17 +790,17 @@
         .game-overlay-1956.active { opacity: 1; pointer-events: all; }
 
         .tv-set-1956 {
-            width: 90%; max-width: 500px; background: #6b4423; /* Retro wood */
-            border-radius: 20px; padding: 20px 20px 40px 20px;
+            width: 92%; max-width: min(440px, 92vw); background: #6b4423; /* Retro wood */
+            border-radius: 20px; padding: 15px 15px 25px 15px;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 15px 30px rgba(0,0,0,0.6);
-            display: flex; flex-direction: column; align-items: center; gap: 20px;
-            position: relative; z-index: 10; margin-top: 50px;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            position: relative; z-index: 10; margin-top: 60px;
         }
         
         .tv-screen-1956 {
-            width: 100%; aspect-ratio: 4/3; background: #888;
+            width: 100%; aspect-ratio: 4/3; max-height: 32vh; background: #888;
             border-radius: 50% 50% 50% 50% / 10% 10% 10% 10%; /* CRT curve */
-            border: 15px solid #222; overflow: hidden; position: relative;
+            border: 10px solid #222; overflow: hidden; position: relative;
             box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
         }
 
@@ -769,17 +825,23 @@
         .tv-slider-1956 {
             width: 100%; height: 20px; -webkit-appearance: none; background: #222; 
             border-radius: 10px; outline: none; border: 2px solid #111;
+            touch-action: manipulation;
         }
         .tv-slider-1956::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 45px; height: 45px; border-radius: 50%;
+            -webkit-appearance: none; width: 44px; height: 44px; border-radius: 50%;
+            background: #d4af37; cursor: pointer; border: 4px solid #fff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        }
+        .tv-slider-1956::-moz-range-thumb {
+            width: 44px; height: 44px; border-radius: 50%;
             background: #d4af37; cursor: pointer; border: 4px solid #fff;
             box-shadow: 0 4px 6px rgba(0,0,0,0.5);
         }
 
         .score-1956 {
-            background: #111; color: #4CAF50; padding: 10px 20px;
+            background: #111; color: #4CAF50; padding: 8px 16px;
             border-radius: 10px; font-family: 'Courier New', monospace;
-            font-size: 1.2rem; font-weight: bold; border: 2px solid #333;
+            font-size: 1.1rem; font-weight: bold; border: 2px solid #333;
         }
 
         /* 1957 MINIGAME OVERLAY CSS */
@@ -797,17 +859,17 @@
         }
 
         .score-1957 {
-            position: absolute; top: 80px; left: 50%; transform: translateX(-50%);
-            background: white; padding: 15px 30px; border-radius: 30px;
-            font-weight: bold; font-family: 'Playfair Display', serif; font-size: 1.5rem;
+            position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+            background: white; padding: 8px 18px; border-radius: 30px;
+            font-weight: bold; font-family: 'Playfair Display', serif; font-size: clamp(0.95rem, 3.5vw, 1.2rem);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); color: #333; z-index: 10;
             border: 3px solid #ff4081; /* Pink border */
-            white-space: nowrap;
+            max-width: 90vw; text-align: center; pointer-events: none;
         }
 
         .piggy-bank-1957 {
-            position: absolute; bottom: 30px; left: 50%;
-            font-size: 5rem; user-select: none; transform: translateX(-50%);
+            position: absolute; bottom: 25px; left: 50%;
+            font-size: clamp(3.5rem, 12vw, 5rem); user-select: none; transform: translateX(-50%);
             z-index: 10; pointer-events: none;
             filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2));
             transition: transform 0.1s;
@@ -842,11 +904,11 @@
             border-top: 3px solid rgba(255,255,255,0.4); z-index: 4; pointer-events: none;
         }
         .crane-rail-1958 {
-            position: absolute; top: 120px; left: 0; width: 100%; height: 10px;
+            position: absolute; top: 125px; left: 0; width: 100%; height: 10px;
             background: #2c3e50; z-index: 10; pointer-events: none;
         }
         .crane-1958 {
-            position: absolute; top: 110px; left: 50%;
+            position: absolute; top: 115px; left: 50%;
             width: 40px; height: 30px; background: #f39c12;
             transform: translateX(-50%); z-index: 11;
             pointer-events: none; border-radius: 5px;
@@ -864,11 +926,11 @@
             transition: bottom 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53);
         }
         .score-1958 {
-            position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
-            background: white; padding: 12px 24px; border-radius: 20px;
-            font-weight: bold; font-family: 'Playfair Display', serif; font-size: 1.3rem;
+            position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+            background: white; padding: 8px 18px; border-radius: 20px;
+            font-weight: bold; font-family: 'Playfair Display', serif; font-size: clamp(0.95rem, 3.5vw, 1.2rem);
             box-shadow: 0 4px 6px rgba(0,0,0,0.2); color: #333; z-index: 20;
-            border: 3px solid #333; pointer-events: none; white-space: nowrap;
+            border: 3px solid #333; pointer-events: none; max-width: 90vw; text-align: center;
         }
 
         /* 1959 MINIGAME OVERLAY CSS */
@@ -881,23 +943,26 @@
         .game-overlay-1959.active { opacity: 1; pointer-events: all; }
 
         .score-1959 {
-            background: #fff; padding: 10px 20px; border-radius: 20px;
-            font-weight: bold; font-family: 'Playfair Display', serif; font-size: 1.5rem;
+            background: #fff; padding: 8px 18px; border-radius: 20px;
+            font-weight: bold; font-family: 'Playfair Display', serif; font-size: clamp(0.95rem, 3.5vw, 1.2rem);
             box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: #3e2723; z-index: 10;
-            margin-bottom: 20px; border: 3px solid #8d6e63;
+            margin-top: 65px; margin-bottom: 12px; border: 3px solid #8d6e63;
+            max-width: 90vw; text-align: center; pointer-events: none;
         }
 
         .grid-1959 {
             display: grid; grid-template-columns: repeat(12, 1fr);
-            gap: 4px; background: #2b1713; padding: 8px; border-radius: 8px;
-            width: 95%; max-width: 500px; max-height: 70vh; aspect-ratio: 1;
+            gap: 3px; background: #2b1713; padding: 6px; border-radius: 8px;
+            width: 95%; max-width: min(440px, 92vw); max-height: 60vh; aspect-ratio: 1;
+            touch-action: manipulation;
         }
 
         .cell-1959 {
             background: #8d6e63; border-radius: 4px; cursor: pointer;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; transition: transform 0.1s, background 0.3s;
+            font-size: clamp(1rem, 3vw, 1.3rem); transition: transform 0.1s, background 0.3s;
+            touch-action: manipulation;
         }
         .cell-1959:hover { transform: scale(0.95); }
         .cell-1959.revealed-empty { background: #5d4037; cursor: default; transform: scale(1); box-shadow: inset 0 0 15px rgba(0,0,0,0.6); }
@@ -915,21 +980,21 @@
         .game-overlay-1960.active { opacity: 1; pointer-events: all; }
         
         .clock-1960 {
-            position: absolute; top: 20px; right: 20px;
-            width: 80px; height: 80px; border-radius: 50%;
-            background: white; border: 4px solid #333;
+            position: absolute; top: 118px; left: 50%; transform: translateX(-50%);
+            width: 65px; height: 65px; border-radius: 50%;
+            background: white; border: 3px solid #333;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             display: flex; align-items: center; justify-content: center;
-            font-family: 'Courier New', monospace; font-size: 1.2rem; font-weight: bold;
-            color: #333; flex-direction: column; z-index: 20;
+            font-family: 'Courier New', monospace; font-size: 1rem; font-weight: bold;
+            color: #333; flex-direction: column; z-index: 20; pointer-events: none;
         }
 
         .score-1960 {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            background: #fff; padding: 15px 30px; border-radius: 10px;
-            font-weight: bold; font-family: 'Courier New', monospace; font-size: 1.5rem;
+            position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+            background: #fff; padding: 8px 18px; border-radius: 10px;
+            font-weight: bold; font-family: 'Courier New', monospace; font-size: clamp(0.95rem, 3.5vw, 1.2rem);
             box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: #333; z-index: 20;
-            border: 2px solid #333;
+            border: 2px solid #333; max-width: 90vw; text-align: center; pointer-events: none;
         }
 
         .document-1960 {
@@ -959,11 +1024,11 @@
         .game-overlay-1961.flash-red { background: #802020; }
         
         .score-1961 {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            background: #fff; padding: 10px 20px; border-radius: 20px;
-            font-weight: bold; font-family: 'Courier New', monospace; font-size: 1.5rem;
+            position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+            background: #fff; padding: 8px 18px; border-radius: 20px;
+            font-weight: bold; font-family: 'Courier New', monospace; font-size: clamp(0.95rem, 3.5vw, 1.2rem);
             box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: #333; z-index: 20;
-            border: 3px solid #333; white-space: nowrap;
+            border: 3px solid #333; max-width: 90vw; text-align: center; pointer-events: none;
         }
 
         .game-area-1961 {
@@ -999,15 +1064,16 @@
         .game-overlay-1962.active { opacity: 1; pointer-events: all; }
         
         .score-1962 {
-            background: rgba(255,255,255,0.9); padding: 10px 20px; border-radius: 20px;
-            font-weight: bold; font-family: 'Playfair Display', serif; font-size: 1.5rem;
+            background: rgba(255,255,255,0.9); padding: 8px 18px; border-radius: 20px;
+            font-weight: bold; font-family: 'Playfair Display', serif; font-size: clamp(0.95rem, 3.5vw, 1.2rem);
             box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: #01579b; z-index: 10;
-            margin-bottom: 20px; border: 3px solid #01579b;
+            margin-top: 65px; margin-bottom: 12px; border: 3px solid #01579b;
+            max-width: 90vw; text-align: center; pointer-events: none;
         }
 
         .map-grid-1962 {
             display: grid; grid-template-columns: repeat(15, 1fr);
-            gap: 2px; width: 95%; max-width: 800px; 
+            gap: 2px; width: 95%; max-width: min(720px, 95vw); 
             background: #01579b; padding: 4px; border: 4px solid #01579b; border-radius: 8px;
             touch-action: none; /* prevent scrolling during swipe */
         }
@@ -1017,6 +1083,7 @@
             background: #29b6f6; /* Light ocean blue */
             cursor: pointer; transition: background 0.4s, transform 0.2s;
             border-radius: 2px;
+            touch-action: none;
         }
         .map-cell-1962.revealed {
             background: #689f38; /* Land green */
@@ -1036,11 +1103,11 @@
         .game-overlay-1963.flash-hit { background: #81d4fa; }
         
         .score-1963 {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            background: #fff; padding: 10px 20px; border-radius: 20px;
-            font-weight: bold; font-family: 'Courier New', monospace; font-size: 1.5rem;
+            position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+            background: #fff; padding: 8px 18px; border-radius: 20px;
+            font-weight: bold; font-family: 'Courier New', monospace; font-size: clamp(0.95rem, 3.5vw, 1.2rem);
             box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: #006064; z-index: 20;
-            border: 3px solid #006064; white-space: nowrap;
+            border: 3px solid #006064; max-width: 90vw; text-align: center; pointer-events: none;
         }
 
         .game-area-1963 {
@@ -1083,11 +1150,11 @@
         .game-overlay-1964.active { opacity: 1; pointer-events: all; }
         
         .score-1964 {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            background: #fff; padding: 10px 20px; border-radius: 20px;
-            font-weight: bold; font-family: 'Courier New', monospace; font-size: 1.5rem;
+            position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+            background: #fff; padding: 8px 18px; border-radius: 20px;
+            font-weight: bold; font-family: 'Courier New', monospace; font-size: clamp(0.95rem, 3.5vw, 1.2rem);
             box-shadow: 0 4px 6px rgba(0,0,0,0.5); color: #222; z-index: 20;
-            border: 3px solid #f1c40f; white-space: nowrap;
+            border: 3px solid #f1c40f; max-width: 90vw; text-align: center; pointer-events: none;
         }
 
         .track-1964 {
@@ -1119,10 +1186,11 @@
         }
 
         .btn-hit-1964 {
-            position: absolute; bottom: 20px; padding: 15px 40px; font-size: 1.2rem;
+            position: absolute; bottom: 25px; padding: 14px 35px; font-size: 1.1rem;
             border-radius: 30px; background: #e74c3c; color: white; border: 2px solid #fff;
             font-weight: bold; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-            z-index: 30; user-select: none;
+            z-index: 30; user-select: none; touch-action: manipulation;
+            min-height: 48px;
         }
         .btn-hit-1964:active { transform: scale(0.95); background: #c0392b; }
         
@@ -1137,17 +1205,18 @@
         .game-overlay-1965.active { opacity: 1; pointer-events: all; }
 
         .score-1965 {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            background: #fff; padding: 10px 20px; border-radius: 20px;
-            font-weight: bold; font-family: 'Courier New', monospace; font-size: 1.5rem;
+            position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+            background: #fff; padding: 8px 18px; border-radius: 20px;
+            font-weight: bold; font-family: 'Courier New', monospace; font-size: clamp(0.95rem, 3.5vw, 1.2rem);
             box-shadow: 0 4px 6px rgba(0,0,0,0.5); color: #2c3e50; z-index: 30;
-            border: 3px solid #bdc3c7; white-space: nowrap;
+            border: 3px solid #bdc3c7; max-width: 90vw; text-align: center; pointer-events: none;
         }
 
         .game-area-1965 {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             overflow: hidden; background-image: radial-gradient(#34495e 1px, transparent 1px);
             background-size: 40px 40px; /* simple street pattern */
+            touch-action: none;
         }
 
         .player-1965 {
@@ -1156,6 +1225,7 @@
             font-size: 2rem; z-index: 20;
             transition: transform 0.1s; /* smooth turning */
             filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));
+            pointer-events: none;
         }
 
         .checkpoint-1965 {
@@ -1165,6 +1235,7 @@
             box-shadow: 0 0 15px rgba(236, 240, 241, 0.8);
             z-index: 10;
             animation: pulse-1965 1.5s infinite;
+            pointer-events: none;
         }
         @keyframes pulse-1965 {
             0% { transform: scale(0.9); box-shadow: 0 0 10px rgba(236, 240, 241, 0.5); }
@@ -1173,14 +1244,16 @@
         }
 
         .dpad-1965 {
-            position: absolute; bottom: 30px; right: 30px;
-            display: grid; grid-template-columns: 60px 60px 60px; gap: 5px; z-index: 40;
+            position: absolute; bottom: 20px; right: 20px;
+            display: grid; grid-template-columns: 52px 52px 52px; gap: 4px; z-index: 40;
+            touch-action: manipulation;
         }
         .dpad-btn {
-            width: 60px; height: 60px; background: rgba(236, 240, 241, 0.2);
-            border: 2px solid #ecf0f1; border-radius: 15px; color: #ecf0f1;
-            font-size: 2rem; display: flex; align-items: center; justify-content: center;
+            width: 52px; height: 52px; background: rgba(236, 240, 241, 0.25);
+            border: 2px solid #ecf0f1; border-radius: 12px; color: #ecf0f1;
+            font-size: 1.6rem; display: flex; align-items: center; justify-content: center;
             user-select: none; cursor: pointer; backdrop-filter: blur(5px);
+            touch-action: manipulation; -webkit-tap-highlight-color: transparent;
         }
         .dpad-btn:active { background: rgba(236, 240, 241, 0.5); transform: scale(0.95); }
         .dpad-up { grid-column: 2; grid-row: 1; }
@@ -1191,14 +1264,29 @@
         @media (max-width: 768px) {
             .header-title { font-size: 1.6rem; }
             .header-title span { font-size: 2.2rem; }
-            .grid-container { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
-            .card { padding: 20px 15px; min-height: 180px; }
+            .grid-container { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; padding: 15px; }
+            .card { padding: 18px 12px; min-height: 170px; }
             .year-label { font-size: 2rem; }
-            .modal-title { font-size: 2.4rem; }
-            .retro-modal h2 { font-size: 2rem; }
+            .modal-title { font-size: 2.2rem; }
+            .retro-modal h2 { font-size: 1.8rem; }
             .retro-modal .quote { font-size: 0.95rem; }
             .cable-grid { grid-template-columns: repeat(auto-fit, minmax(30px, 1fr)); gap: 8px; }
             .plug { width: 30px; height: 30px; }
+            .game-header { top: 8px; left: 8px; right: 8px; }
+            .close-game-btn { padding: 8px 14px; font-size: 0.95rem; }
+            .game-year-display { font-size: 1.8rem; }
+        }
+
+        @media (max-width: 480px) {
+            .header-title { font-size: 1.3rem; }
+            .header-title span { font-size: 1.8rem; }
+            .grid-container { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
+            .card { padding: 14px 10px; min-height: 150px; }
+            .year-label { font-size: 1.7rem; }
+            .card-theme { font-size: 0.85rem; }
+            .btn-play { padding: 8px 14px; font-size: 0.9rem; }
+            .dpad-1965 { bottom: 15px; right: 15px; grid-template-columns: 46px 46px 46px; }
+            .dpad-btn { width: 46px; height: 46px; font-size: 1.4rem; }
         }
     </style>
 </head>
@@ -1298,6 +1386,7 @@
                 Je was net niet snel genoeg... Probeer het opnieuw.
             </div>
             <button class="retro-btn" onclick="startMinigame1953()">Probeer opnieuw</button>
+            <button class="retro-btn" onclick="closeGameOverlay(1953)" style="margin-top: 10px; background: #555;">Terug naar Dashboard</button>
         </div>
     </div>
 
@@ -1542,7 +1631,7 @@
 
     <!-- MINIGAME OVERLAY: 1964 -->
     <div id="game-overlay-1964" class="game-overlay-1964">
-        <div class="game-header" style="z-index: 40;">
+        <div class="game-header">
             <button class="close-game-btn" onclick="closeGameOverlay(1964)" style="background: #222; color: #f1c40f; border-color: #f1c40f;">← Terug</button>
             <div class="game-year-display" style="color: #f1c40f; text-shadow: 2px 2px 0px #222, -1px -1px 0 #222, 1px -1px 0 #222, -1px 1px 0 #222, 1px 1px 0 #222;">1964</div>
         </div>
@@ -1565,7 +1654,7 @@
 
     <!-- MINIGAME OVERLAY: 1965 -->
     <div id="game-overlay-1965" class="game-overlay-1965">
-        <div class="game-header" style="z-index: 40;">
+        <div class="game-header">
             <button class="close-game-btn" onclick="closeGameOverlay(1965)" style="background: #ecf0f1; color: #2c3e50; border-color: #bdc3c7;">← Terug</button>
             <div class="game-year-display" style="color: #ecf0f1; text-shadow: 2px 2px 0px #2c3e50, -1px -1px 0 #2c3e50, 1px -1px 0 #2c3e50, -1px 1px 0 #2c3e50, 1px 1px 0 #2c3e50;">1965</div>
         </div>
@@ -1677,32 +1766,170 @@
             updateDashboard(false);
         }
 
-        function closeGameOverlay(year) {
-            const overlay = document.getElementById(`game-overlay-${year}`);
-            if (overlay) overlay.classList.remove('active');
-            
-            if (year === 1952) { clearInterval(spawnLoop1952); cancelAnimationFrame(gameLoop1952); }
-            if (year === 1953) { isPlaying1953 = false; clearInterval(timerInterval1953); clearInterval(leakSpawner1953); }
-            if (year === 1954) { isPlaying1954 = false; cancelAnimationFrame(penaltyLoop1954); }
-            if (year === 1956) { isPlaying1956 = false; cancelAnimationFrame(loop1956); }
-            if (year === 1957) { isPlaying1957 = false; cancelAnimationFrame(loop1957); }
-            if (year === 1958) { isPlaying1958 = false; cancelAnimationFrame(craneLoop1958); }
-            if (year === 1959) { isPlaying1959 = false; }
-            if (year === 1960) { isPlaying1960 = false; clearTimeout(spawnTimeout1960); }
-            if (year === 1961) { isPlaying1961 = false; cancelAnimationFrame(loop1961); }
-            if (year === 1962) { 
-                isPlaying1962 = false; 
-                window.removeEventListener('mouseup', stopDragging1962); 
-                const mg = document.getElementById('map-grid-1962'); 
-                if(mg) mg.removeEventListener('touchmove', handleTouchMove1962); 
+        let activeGameYear = null;
+
+        function closeGameOverlay(year, triggerHistory = true) {
+            const targetYear = year || activeGameYear;
+            if (!targetYear) {
+                document.querySelectorAll('.game-overlay, [class*="game-overlay-"]').forEach(o => {
+                    o.classList.remove('active');
+                });
+                document.querySelectorAll('.retro-modal').forEach(m => {
+                    m.classList.remove('active');
+                });
+                activeGameYear = null;
+                return;
             }
-            if (year === 1963) { isPlaying1963 = false; cancelAnimationFrame(loop1963); }
-            if (year === 1964) { isPlaying1964 = false; cancelAnimationFrame(loop1964); document.removeEventListener('keydown', handleSpacebar1964); }
-            if (year === 1965) { isPlaying1965 = false; cancelAnimationFrame(loop1965); document.removeEventListener('keydown', handleKeyDown1965); document.removeEventListener('keyup', handleKeyUp1965); }
+
+            const y = parseInt(targetYear, 10);
+            const overlay = document.getElementById(`game-overlay-${y}`);
+            if (overlay) {
+                overlay.classList.remove('active');
+                overlay.querySelectorAll('.retro-modal').forEach(m => m.classList.remove('active'));
+            }
+
+            // Universal modal close across all overlays
+            document.querySelectorAll('.retro-modal').forEach(m => {
+                m.classList.remove('active');
+            });
+
+            if (y === 1951) {
+                const bg = document.getElementById('bg-test-pattern');
+                if (bg) bg.classList.remove('active');
+            }
+            if (y === 1952) {
+                if (typeof spawnLoop1952 !== 'undefined') clearInterval(spawnLoop1952);
+                if (typeof gameLoop1952 !== 'undefined') cancelAnimationFrame(gameLoop1952);
+                if (typeof magazines1952 !== 'undefined' && Array.isArray(magazines1952)) {
+                    magazines1952.forEach(m => { if (m.el && m.el.remove) m.el.remove(); });
+                    magazines1952 = [];
+                }
+            }
+            if (y === 1953) {
+                isPlaying1953 = false;
+                if (typeof timerInterval1953 !== 'undefined') clearInterval(timerInterval1953);
+                if (typeof leakSpawner1953 !== 'undefined') clearInterval(leakSpawner1953);
+            }
+            if (y === 1954) {
+                isPlaying1954 = false;
+                if (typeof penaltyLoop1954 !== 'undefined') cancelAnimationFrame(penaltyLoop1954);
+            }
+            if (y === 1956) {
+                isPlaying1956 = false;
+                if (typeof loop1956 !== 'undefined') cancelAnimationFrame(loop1956);
+            }
+            if (y === 1957) {
+                isPlaying1957 = false;
+                if (typeof loop1957 !== 'undefined') cancelAnimationFrame(loop1957);
+                if (typeof coins1957 !== 'undefined' && Array.isArray(coins1957)) {
+                    coins1957.forEach(c => { if (c.elem && c.elem.remove) c.elem.remove(); });
+                    coins1957 = [];
+                }
+            }
+            if (y === 1958) {
+                isPlaying1958 = false;
+                if (typeof craneLoop1958 !== 'undefined') cancelAnimationFrame(craneLoop1958);
+            }
+            if (y === 1959) {
+                isPlaying1959 = false;
+            }
+            if (y === 1960) {
+                isPlaying1960 = false;
+                if (typeof spawnTimeout1960 !== 'undefined') clearTimeout(spawnTimeout1960);
+                const desk = document.getElementById('desk-area-1960');
+                if (desk) desk.innerHTML = '';
+                if (typeof activeDocs1960 !== 'undefined') activeDocs1960 = 0;
+            }
+            if (y === 1961) {
+                isPlaying1961 = false;
+                if (typeof loop1961 !== 'undefined') cancelAnimationFrame(loop1961);
+                if (typeof walls1961 !== 'undefined' && Array.isArray(walls1961)) {
+                    walls1961.forEach(w => { if (w.elem && w.elem.remove) w.elem.remove(); });
+                    walls1961 = [];
+                }
+                const ov61 = document.getElementById('game-overlay-1961');
+                if (ov61) ov61.classList.remove('flash-red');
+            }
+            if (y === 1962) {
+                isPlaying1962 = false;
+                if (typeof stopDragging1962 === 'function') {
+                    window.removeEventListener('mouseup', stopDragging1962);
+                    window.removeEventListener('touchend', stopDragging1962);
+                }
+                const mg = document.getElementById('map-grid-1962');
+                if (mg && typeof handleTouchMove1962 === 'function') {
+                    mg.removeEventListener('touchmove', handleTouchMove1962);
+                }
+            }
+            if (y === 1963) {
+                isPlaying1963 = false;
+                if (typeof loop1963 !== 'undefined') cancelAnimationFrame(loop1963);
+                if (typeof obstacles1963 !== 'undefined' && Array.isArray(obstacles1963)) {
+                    obstacles1963.forEach(o => { if (o.elem && o.elem.remove) o.elem.remove(); });
+                    obstacles1963 = [];
+                }
+                const ov63 = document.getElementById('game-overlay-1963');
+                if (ov63) ov63.classList.remove('flash-hit');
+            }
+            if (y === 1964) {
+                isPlaying1964 = false;
+                if (typeof loop1964 !== 'undefined') cancelAnimationFrame(loop1964);
+                if (typeof handleSpacebar1964 === 'function') {
+                    document.removeEventListener('keydown', handleSpacebar1964);
+                }
+                if (typeof notes1964 !== 'undefined' && Array.isArray(notes1964)) {
+                    notes1964.forEach(n => { if (n.elem && n.elem.remove) n.elem.remove(); });
+                    notes1964 = [];
+                }
+            }
+            if (y === 1965) {
+                isPlaying1965 = false;
+                if (typeof loop1965 !== 'undefined') cancelAnimationFrame(loop1965);
+                if (typeof handleKeyDown1965 === 'function') {
+                    document.removeEventListener('keydown', handleKeyDown1965);
+                }
+                if (typeof handleKeyUp1965 === 'function') {
+                    document.removeEventListener('keyup', handleKeyUp1965);
+                }
+                if (typeof checkpoints1965 !== 'undefined' && Array.isArray(checkpoints1965)) {
+                    checkpoints1965.forEach(c => { if (c.elem && c.elem.remove) c.elem.remove(); });
+                    checkpoints1965 = [];
+                }
+            }
+
+            if (activeGameYear === y) {
+                activeGameYear = null;
+                if (triggerHistory && window.location.hash.startsWith('#game-')) {
+                    history.back();
+                }
+            }
         }
+
+        function finishMinigame(year) {
+            closeGameOverlay(year, true);
+            setTimeout(() => {
+                completeGame(year);
+            }, 300);
+        }
+
+        // Support mobile hardware/browser back button
+        window.addEventListener('popstate', () => {
+            if (activeGameYear !== null) {
+                closeGameOverlay(activeGameYear, false);
+            }
+        });
 
         // Handle Play button click router
         function playGame(year) {
+            activeGameYear = year;
+            try {
+                if (window.location.hash !== `#game-${year}`) {
+                    history.pushState({ game: year }, '', `#game-${year}`);
+                }
+            } catch (err) {
+                // Ignore history issues in restrictive iframe environments
+            }
+
             if (year === 1951) {
                 startMinigame1951();
             } else if (year === 1952) {
@@ -1837,13 +2064,7 @@
         }
 
         function finishMinigame1951() {
-            // Close the overlay
-            overlay1951.classList.remove('active');
-            
-            // Trigger the general completion flow after transition
-            setTimeout(() => {
-                completeGame(1951);
-            }, 400);
+            finishMinigame(1951);
         }
         // ==========================================
 
@@ -1884,6 +2105,9 @@
         }
 
         area1952.addEventListener('mousemove', moveMailbox1952);
+        area1952.addEventListener('touchstart', (e) => {
+            moveMailbox1952(e);
+        }, { passive: true });
         area1952.addEventListener('touchmove', (e) => { 
             e.preventDefault(); // Prevent scrolling
             moveMailbox1952(e); 
@@ -2001,10 +2225,7 @@
         }
 
         function finishMinigame1952() {
-            overlay1952.classList.remove('active');
-            setTimeout(() => {
-                completeGame(1952);
-            }, 400);
+            finishMinigame(1952);
         }
         // ==========================================
 
@@ -2123,8 +2344,7 @@
         }
 
         function finishMinigame1953() {
-            overlay1953.classList.remove('active');
-            setTimeout(() => completeGame(1953), 400);
+            finishMinigame(1953);
         }
         // ==========================================
 
@@ -2214,8 +2434,7 @@
         }
 
         function finishMinigame1954() {
-            overlay1954.classList.remove('active');
-            setTimeout(() => completeGame(1954), 400);
+            finishMinigame(1954);
         }
         // ==========================================
 
@@ -2306,8 +2525,7 @@
         }
 
         function finishMinigame1955() {
-            overlay1955.classList.remove('active');
-            setTimeout(() => completeGame(1955), 400);
+            finishMinigame(1955);
         }
         // ==========================================
 
@@ -2397,8 +2615,7 @@
         }
 
         function finishMinigame1956() {
-            overlay1956.classList.remove('active');
-            setTimeout(() => completeGame(1956), 400);
+            finishMinigame(1956);
         }
         // ==========================================
 
@@ -2423,6 +2640,9 @@
         area1957.addEventListener('mousemove', (e) => {
             if (isPlaying1957) piggyX = e.clientX;
         });
+        area1957.addEventListener('touchstart', (e) => {
+            if (isPlaying1957 && e.touches && e.touches.length > 0) piggyX = e.touches[0].clientX;
+        }, { passive: true });
         area1957.addEventListener('touchmove', (e) => {
             if (isPlaying1957) {
                 piggyX = e.touches[0].clientX;
@@ -2541,8 +2761,7 @@
         }
 
         function finishMinigame1957() {
-            overlay1957.classList.remove('active');
-            setTimeout(() => completeGame(1957), 400);
+            finishMinigame(1957);
         }
         // ==========================================
 
@@ -2642,8 +2861,7 @@
         }
 
         function finishMinigame1958() {
-            overlay1958.classList.remove('active');
-            setTimeout(() => completeGame(1958), 400);
+            finishMinigame(1958);
         }
         // ==========================================
 
@@ -2722,8 +2940,7 @@
         }
 
         function finishMinigame1959() {
-            overlay1959.classList.remove('active');
-            setTimeout(() => completeGame(1959), 400);
+            finishMinigame(1959);
         }
         // ==========================================
 
@@ -2851,8 +3068,7 @@
         }
 
         function finishMinigame1960() {
-            overlay1960.classList.remove('active');
-            setTimeout(() => completeGame(1960), 400);
+            finishMinigame(1960);
         }
         // ==========================================
 
@@ -2878,6 +3094,9 @@
         area1961.addEventListener('mousemove', (e) => {
             if (isPlaying1961) playerX1961 = e.clientX;
         });
+        area1961.addEventListener('touchstart', (e) => {
+            if (isPlaying1961 && e.touches && e.touches.length > 0) playerX1961 = e.touches[0].clientX;
+        }, { passive: true });
         area1961.addEventListener('touchmove', (e) => {
             if (isPlaying1961) {
                 playerX1961 = e.touches[0].clientX;
@@ -3039,8 +3258,7 @@
         }
 
         function finishMinigame1961() {
-            overlay1961.classList.remove('active');
-            setTimeout(() => completeGame(1961), 400);
+            finishMinigame(1961);
         }
         // ==========================================
 
@@ -3062,7 +3280,7 @@
             isPlaying1962 = true;
             isDragging1962 = false;
             
-            scoreUI1962.innerText = `Kaartstukken geplaatst: 0 / \${TOTAL_MAP_PIECES_1962}`;
+            scoreUI1962.innerText = `Kaartstukken geplaatst: 0 / ${TOTAL_MAP_PIECES_1962}`;
             winModal1962.classList.remove('active');
             
             // Generate grid
@@ -3112,7 +3330,7 @@
             
             cell.classList.add('revealed');
             piecesPlaced1962++;
-            scoreUI1962.innerText = `Kaartstukken geplaatst: \${piecesPlaced1962} / \${TOTAL_MAP_PIECES_1962}`;
+            scoreUI1962.innerText = `Kaartstukken geplaatst: ${piecesPlaced1962} / ${TOTAL_MAP_PIECES_1962}`;
             
             if(piecesPlaced1962 >= TOTAL_MAP_PIECES_1962) {
                 winMinigame1962();
@@ -3137,8 +3355,7 @@
         }
 
         function finishMinigame1962() {
-            overlay1962.classList.remove('active');
-            setTimeout(() => completeGame(1962), 400);
+            finishMinigame(1962);
         }
         // ==========================================
 
@@ -3164,6 +3381,9 @@
         area1963.addEventListener('mousemove', (e) => {
             if (isPlaying1963) playerX1963 = e.clientX;
         });
+        area1963.addEventListener('touchstart', (e) => {
+            if (isPlaying1963 && e.touches && e.touches.length > 0) playerX1963 = e.touches[0].clientX;
+        }, { passive: true });
         area1963.addEventListener('touchmove', (e) => {
             if (isPlaying1963) {
                 playerX1963 = e.touches[0].clientX;
@@ -3191,7 +3411,7 @@
             spawnTimer1963 = 0;
             overlay1963.classList.remove('flash-hit');
             
-            scoreUI1963.innerText = `Obstakels ontweken: 0 / \${TOTAL_OBS_1963}`;
+            scoreUI1963.innerText = `Obstakels ontweken: 0 / ${TOTAL_OBS_1963}`;
             winModal1963.classList.remove('active');
             
             overlay1963.classList.add('active');
@@ -3246,7 +3466,7 @@
                     obs.passed = true;
                     if (!obs.hit) {
                         score1963++;
-                        scoreUI1963.innerText = `Obstakels ontweken: \${score1963} / \${TOTAL_OBS_1963}`;
+                        scoreUI1963.innerText = `Obstakels ontweken: ${score1963} / ${TOTAL_OBS_1963}`;
                         if (score1963 >= TOTAL_OBS_1963) {
                             winMinigame1963();
                         }
@@ -3274,7 +3494,7 @@
             const speed = 5 + Math.random() * 5;
             
             const elem = document.createElement('div');
-            elem.className = `obstacle-1963 \${isHole ? 'obs-hole' : 'obs-dune'}`;
+            elem.className = `obstacle-1963 ${isHole ? 'obs-hole' : 'obs-dune'}`;
             elem.style.left = x + 'px';
             elem.style.top = '-100px';
             elem.style.width = size + 'px';
@@ -3302,8 +3522,7 @@
         }
 
         function finishMinigame1963() {
-            overlay1963.classList.remove('active');
-            setTimeout(() => completeGame(1963), 400);
+            finishMinigame(1963);
         }
         // ==========================================
 
@@ -3336,7 +3555,7 @@
             notes1964 = [];
             spawnTimer1964 = 0;
             
-            scoreUI1964.innerText = `Akkoorden geraakt: 0 / \${TOTAL_CHORDS_1964}`;
+            scoreUI1964.innerText = `Akkoorden geraakt: 0 / ${TOTAL_CHORDS_1964}`;
             winModal1964.classList.remove('active');
             
             document.addEventListener('keydown', handleSpacebar1964);
@@ -3410,7 +3629,7 @@
                     n.hit = true;
                     n.elem.classList.add('hit');
                     score1964++;
-                    scoreUI1964.innerText = `Akkoorden geraakt: \${score1964} / \${TOTAL_CHORDS_1964}`;
+                    scoreUI1964.innerText = `Akkoorden geraakt: ${score1964} / ${TOTAL_CHORDS_1964}`;
                     
                     if (score1964 >= TOTAL_CHORDS_1964) {
                         winMinigame1964();
@@ -3438,8 +3657,7 @@
         }
 
         function finishMinigame1964() {
-            overlay1964.classList.remove('active');
-            setTimeout(() => completeGame(1964), 400);
+            finishMinigame(1964);
         }
         // ==========================================
 
@@ -3494,7 +3712,7 @@
             keys1965 = { up: false, down: false, left: false, right: false };
             currentScaleX1965 = 1;
             
-            scoreUI1965.innerText = `Checkpoints bereikt: 0 / \${TOTAL_CHECKPOINTS_1965}`;
+            scoreUI1965.innerText = `Checkpoints bereikt: 0 / ${TOTAL_CHECKPOINTS_1965}`;
             winModal1965.classList.remove('active');
             
             document.addEventListener('keydown', handleKeyDown1965);
@@ -3530,7 +3748,7 @@
             
             player1965.style.left = (playerX1965 - 20) + 'px';
             player1965.style.top = (playerY1965 - 20) + 'px';
-            player1965.style.transform = `scaleX(\${currentScaleX1965})`;
+            player1965.style.transform = `scaleX(${currentScaleX1965})`;
             
             // Collision detection with checkpoints
             for(let i = checkpoints1965.length - 1; i >= 0; i--) {
@@ -3542,7 +3760,7 @@
                     cp.elem.remove();
                     checkpoints1965.splice(i, 1);
                     score1965++;
-                    scoreUI1965.innerText = `Checkpoints bereikt: \${score1965} / \${TOTAL_CHECKPOINTS_1965}`;
+                    scoreUI1965.innerText = `Checkpoints bereikt: ${score1965} / ${TOTAL_CHECKPOINTS_1965}`;
                     
                     if(score1965 >= TOTAL_CHECKPOINTS_1965) {
                         winMinigame1965();
@@ -3592,8 +3810,7 @@
         }
 
         function finishMinigame1965() {
-            overlay1965.classList.remove('active');
-            setTimeout(() => completeGame(1965), 400);
+            finishMinigame(1965);
         }
         // ==========================================
 
