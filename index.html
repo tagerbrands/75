@@ -1,0 +1,3673 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>75-Jarig Jubileum - Geverifieerde Leeftijd Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0A192F;
+            --text-main: #E2E8F0;
+            --gold: #FFD700;
+            --gold-dark: #D4AF37;
+            --red-festive: #E63946;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 215, 0, 0.3);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(circle at top left, rgba(255,215,0,0.08), transparent 40%),
+                              radial-gradient(circle at bottom right, rgba(230,57,70,0.08), transparent 40%);
+            overflow-x: hidden;
+            position: relative;
+        }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        
+        /* Floating background balloons */
+        .balloon {
+            position: fixed;
+            bottom: -10vh;
+            animation: floatUp linear infinite;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(-10deg); }
+            50% { transform: translateY(-60vh) rotate(10deg); }
+            100% { transform: translateY(-120vh) rotate(-10deg); }
+        }
+
+        /* Dashboard Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid var(--gold);
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+        }
+        .header-title {
+            color: var(--text-main);
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .header-title span {
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            display: inline-block;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .progress-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            height: 20px;
+            border: 1px solid var(--gold-dark);
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold), #FFF7D6);
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px var(--gold);
+        }
+        
+        /* Grid */
+        main {
+            flex: 1;
+            padding: 50px 20px;
+            max-width: 1300px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 200px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            border-color: var(--gold);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .card.completed {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.4);
+            opacity: 0.7;
+            transform: scale(0.98);
+            box-shadow: none;
+        }
+        .card.completed:hover {
+            transform: scale(0.98);
+        }
+        .year-label {
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .game-title {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: #94A3B8;
+            font-weight: 600;
+        }
+        .play-btn {
+            background: linear-gradient(135deg, var(--red-festive), #C53030);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+        }
+        .play-btn:hover {
+            background: linear-gradient(135deg, #FF5722, var(--red-festive));
+            box-shadow: 0 6px 16px rgba(230, 57, 70, 0.5);
+            transform: scale(1.05);
+        }
+        .completed-mark {
+            display: none;
+            color: var(--gold);
+            font-size: 1.1rem;
+            font-weight: 600;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            animation: fadeIn 0.5s ease forwards;
+            margin-top: 10px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card.completed .completed-mark { display: flex; }
+        .card.completed::after {
+            content: '✓';
+            position: absolute;
+            top: -30px;
+            right: -20px;
+            font-size: 120px;
+            color: rgba(255, 215, 0, 0.05);
+            font-family: sans-serif;
+            pointer-events: none;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0,0,0,0.4);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            z-index: 10;
+        }
+        .reset-btn {
+            background: transparent;
+            border: 1px solid #475569;
+            color: #94A3B8;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .reset-btn:hover {
+            color: #E2E8F0;
+            border-color: #E2E8F0;
+            background: rgba(255,255,255,0.05);
+        }
+        
+        /* Modal Base */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 25, 47, 0.92);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-content {
+            background: linear-gradient(145deg, #1E293B, #0F172A);
+            padding: 60px 40px;
+            border-radius: 24px;
+            border: 2px solid var(--gold);
+            text-align: center;
+            max-width: 550px;
+            width: 90%;
+            transform: scale(0.7) translateY(50px);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8), inset 0 0 40px rgba(255,215,0,0.05);
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+        .modal-title {
+            color: var(--gold);
+            font-size: 3.2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 10px rgba(255,215,0,0.3);
+        }
+        .modal-text {
+            font-size: 1.25rem;
+            line-height: 1.7;
+            margin-bottom: 40px;
+            color: #E2E8F0;
+        }
+        .modal-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #000;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .modal-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+        }
+
+        /* GLOBAL MINIGAME HEADER */
+        .game-header {
+            position: absolute; top: 15px; left: 15px; right: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 2500; pointer-events: all;
+        }
+        .close-game-btn {
+            background: rgba(230, 57, 70, 0.9); color: white;
+            border: 2px solid white; padding: 8px 16px; border-radius: 20px;
+            font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            font-family: 'Courier New', monospace; font-size: 1.1rem;
+            transition: transform 0.1s;
+        }
+        .close-game-btn:active { transform: scale(0.95); }
+        .game-year-display {
+            font-size: 2.5rem; font-weight: bold; color: white;
+            text-shadow: 2px 2px 0px #111, -1px -1px 0 #111, 1px -1px 0 #111, -1px 1px 0 #111, 1px 1px 0 #111;
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* 1951 MINIGAME OVERLAY CSS */
+        .game-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            overflow: hidden;
+            background: #000;
+        }
+        .game-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .bg-static {
+            position: absolute;
+            top: -10%; left: -10%; width: 120%; height: 120%;
+            background-color: #000;
+            background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="4" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.8"/></svg>');
+            animation: flicker 0.15s infinite;
+            z-index: 1;
+        }
+        .bg-test-pattern {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, #C0C0C0 14.28%, #FFFF00 14.28% 28.56%, #00FFFF 28.56% 42.84%, #00FF00 42.84% 57.12%, #FF00FF 57.12% 71.4%, #FF0000 71.4% 85.68%, #0000FF 85.68%);
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .bg-test-pattern.active { opacity: 1; }
+        
+        @keyframes flicker {
+            0% { transform: translate(0, 0) scale(1); opacity: 0.9; }
+            50% { transform: translate(-1%, 1%) scale(1.02); opacity: 1; }
+            100% { transform: translate(1%, -1%) scale(1); opacity: 0.8; }
+        }
+
+        .game-content-1951 {
+            position: relative;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            border: 4px solid #555;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            max-width: 900px;
+            width: 95%;
+            box-shadow: 0 0 50px rgba(0,0,0,1);
+            transition: opacity 0.3s ease;
+        }
+        .retro-title {
+            font-family: 'Courier New', Courier, monospace;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px #000;
+        }
+        .cable-counter-text {
+            font-family: 'Courier New', Courier, monospace;
+            color: #0f0;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        .cable-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
+            gap: 12px;
+            justify-items: center;
+            margin: 0 auto;
+        }
+        .plug {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ff4b4b, #8b0000);
+            border: 3px solid #222;
+            box-shadow: inset -2px -2px 6px rgba(0,0,0,0.6), 0 5px 10px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .plug:active { transform: scale(0.9); }
+        .plug.connected {
+            background: radial-gradient(circle at 30% 30%, #4caf50, #006400);
+            box-shadow: inset -2px -2px 6px rgba(0,0,0,0.6), 0 0 15px rgba(0,255,0,0.8);
+            border-color: #111;
+            pointer-events: none;
+        }
+
+        .retro-modal {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: #f4ecd8; /* Retro beige */
+            border: 8px solid #333;
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            z-index: 20;
+            text-align: center;
+            box-shadow: 20px 20px 0px rgba(0,0,0,0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .retro-modal.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .retro-modal h2 {
+            font-family: 'Playfair Display', serif;
+            color: #222;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .retro-modal .quote {
+            font-family: 'Courier New', Courier, monospace;
+            color: #444;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-style: italic;
+            background: rgba(0,0,0,0.05);
+            padding: 20px;
+            border-left: 4px solid #333;
+            text-align: left;
+        }
+        .retro-btn {
+            background: #333;
+            color: #fff;
+            border: 4px solid #111;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-family: 'Courier New', Courier, monospace;
+            text-transform: uppercase;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.3);
+        }
+        .retro-btn:hover {
+            background: #555;
+            transform: translate(-2px, -2px);
+            box-shadow: 7px 7px 0px rgba(0,0,0,0.3);
+        }
+        .retro-btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+        }
+
+        /* 1952 MINIGAME OVERLAY CSS */
+        .game-overlay-1952 {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            overflow: hidden;
+            background: #87CEEB; /* Sky blue background */
+        }
+        .game-overlay-1952.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .game-area-1952 {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="40" fill="%23fff" opacity="0.1"/></svg>') repeat;
+        }
+        .mailbox-1952 {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) scale(1);
+            width: 90px;
+            height: 120px;
+            background: #E63946;
+            border-radius: 20px 20px 0 0;
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.3), 0 5px 15px rgba(0,0,0,0.4);
+            z-index: 100;
+            cursor: grab;
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            touch-action: none;
+        }
+        .mailbox-1952::after {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 15px;
+            right: 15px;
+            height: 8px;
+            background: #111;
+            border-radius: 4px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+        }
+        .mailbox-1952::before {
+            content: 'POST';
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+        .magazine-1952 {
+            position: absolute;
+            font-size: 2.8rem;
+            z-index: 90;
+            user-select: none;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+        .score-board-1952 {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            color: #111;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 110;
+            white-space: nowrap;
+        }
+
+        /* 1953 MINIGAME OVERLAY CSS */
+        .game-overlay-1953 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease; overflow: hidden;
+            background: linear-gradient(to bottom, #1c2833, #0b1014); /* Stormy dark */
+        }
+        .game-overlay-1953.active { opacity: 1; pointer-events: all; }
+        .rain-1953 {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="0" x2="0" y2="20" stroke="rgba(255,255,255,0.15)" stroke-width="1"/></svg>') repeat;
+            animation: rainDrop 0.2s linear infinite; pointer-events: none; z-index: 1;
+        }
+        @keyframes rainDrop { 0% { background-position: 0 0; } 100% { background-position: -20px 40px; } }
+        .game-ui-1953 {
+            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 20px; z-index: 10; width: 90%; max-width: 600px; justify-content: center;
+        }
+        .status-box-1953 {
+            background: rgba(0,0,0,0.7); color: #E2E8F0; padding: 12px 20px;
+            border-radius: 8px; font-family: 'Courier New', monospace; font-size: 1.1rem;
+            border: 1px solid #475569; text-align: center; font-weight: bold;
+        }
+        .status-box-1953.danger { color: #E63946; border-color: #E63946; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .dike-container-1953 {
+            position: relative; z-index: 5; background: #3c4a3f;
+            padding: 25px; border-radius: 20px;
+            box-shadow: inset 0 10px 30px rgba(0,0,0,0.7), 0 20px 50px rgba(0,0,0,0.9);
+            border: 4px solid #2a342c; transition: opacity 0.3s ease;
+        }
+        .dike-grid-1953 {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px;
+        }
+        .dike-hole {
+            width: 70px; height: 70px; background: #2a342c;
+            border-radius: 50%; border: 3px solid #1c241e;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.6);
+            cursor: pointer; transition: all 0.1s;
+        }
+        .dike-hole.leak {
+            background: radial-gradient(circle, #3498DB, #2980B9);
+            border-color: #2980B9; box-shadow: 0 0 15px #3498DB, inset 0 0 10px rgba(255,255,255,0.6);
+            animation: waterPulse 0.4s infinite alternate;
+        }
+        .dike-hole.sandbag {
+            background: #8B5A2B; border-color: #6B4226;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.7);
+            border-radius: 12px; animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+        @keyframes waterPulse { from { transform: scale(0.95); } to { transform: scale(1.05); } }
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        @media (max-width: 600px) {
+            .dike-hole { width: 50px; height: 50px; }
+            .game-ui-1953 { flex-direction: column; gap: 10px; }
+            .dike-container-1953 { padding: 15px; }
+            .dike-grid-1953 { gap: 10px; }
+        }
+
+        /* 1954 MINIGAME OVERLAY CSS */
+        .game-overlay-1954 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease; overflow: hidden;
+            background: linear-gradient(to bottom, #87CEEB 40%, #4CAF50 40%); /* Sky and grass */
+        }
+        .game-overlay-1954.active { opacity: 1; pointer-events: all; }
+        
+        .football-field-1954 {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.05) 40px, rgba(255,255,255,0.05) 80px);
+            z-index: 1; pointer-events: none;
+        }
+        .football-field-1954.flash-success { animation: flashSuccess 0.3s; }
+        .football-field-1954.flash-fail { animation: flashFail 0.3s; }
+        
+        @keyframes flashSuccess { 0% { background-color: rgba(255,255,255,0.8); } 100% { background-color: transparent; } }
+        @keyframes flashFail { 0% { background-color: rgba(230,57,70,0.5); } 100% { background-color: transparent; } }
+
+        .goal-1954 {
+            position: absolute; top: 15%; left: 50%; transform: translateX(-50%);
+            width: 300px; height: 150px;
+            border: 8px solid white; border-bottom: none;
+            background: rgba(255,255,255,0.1);
+            background-image: linear-gradient(45deg, white 25%, transparent 25%, transparent 75%, white 75%, white),
+                              linear-gradient(45deg, white 25%, transparent 25%, transparent 75%, white 75%, white);
+            background-size: 20px 20px; background-position: 0 0, 10px 10px;
+            z-index: 2;
+        }
+        
+        .game-ui-1954 {
+            position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 600px; z-index: 10;
+            display: flex; flex-direction: column; align-items: center; gap: 30px;
+        }
+        
+        .timing-meter-1954 {
+            width: 100%; height: 50px; background: rgba(0,0,0,0.6);
+            border-radius: 25px; position: relative; overflow: hidden;
+            border: 3px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            cursor: default;
+        }
+        
+        .sweet-spot-1954 {
+            position: absolute; top: 0; height: 100%;
+            background: #4CAF50; /* Green */
+            left: 40%; width: 20%;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        
+        .indicator-1954 {
+            position: absolute; top: -5px; bottom: -5px;
+            width: 15px; background: white; border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+            left: 0%; transform: translateX(-50%); pointer-events: none;
+        }
+        
+        .score-1954 {
+            background: white; color: #111; padding: 15px 30px;
+            border-radius: 30px; font-family: 'Playfair Display', serif;
+            font-size: 1.5rem; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* 1955 MINIGAME OVERLAY CSS */
+        .game-overlay-1955 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease; overflow: hidden;
+            background: #FDFBF7; /* Off-white paper background */
+            flex-direction: column;
+        }
+        .game-overlay-1955.active { opacity: 1; pointer-events: all; }
+        
+        .game-ui-1955 {
+            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+        
+        .coloring-grid-container-1955 {
+            display: grid; grid-template-columns: repeat(9, 1fr); 
+            width: 90%; max-width: 400px;
+            gap: 2px; background: #111; padding: 4px; border: 6px solid #111;
+            margin-top: 60px; justify-content: center; border-radius: 4px;
+        }
+        .coloring-cell-1955 {
+            aspect-ratio: 1;
+            background: white; cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .coloring-cell-1955.black-cell {
+            background: #111; pointer-events: none;
+        }
+
+        .palette-1955 {
+            display: flex; gap: 15px; margin-top: 30px;
+        }
+        .color-btn-1955 {
+            width: 50px; height: 50px; border-radius: 50%;
+            border: 4px solid #111; cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .color-btn-1955.active { transform: scale(1.2); box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+
+        /* 1956 MINIGAME OVERLAY CSS */
+        .game-overlay-1956 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            background: #2b2b2b; flex-direction: column;
+        }
+        .game-overlay-1956.active { opacity: 1; pointer-events: all; }
+
+        .tv-set-1956 {
+            width: 90%; max-width: 500px; background: #6b4423; /* Retro wood */
+            border-radius: 20px; padding: 20px 20px 40px 20px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 15px 30px rgba(0,0,0,0.6);
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+            position: relative; z-index: 10; margin-top: 50px;
+        }
+        
+        .tv-screen-1956 {
+            width: 100%; aspect-ratio: 4/3; background: #888;
+            border-radius: 50% 50% 50% 50% / 10% 10% 10% 10%; /* CRT curve */
+            border: 15px solid #222; overflow: hidden; position: relative;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+        }
+
+        .tv-content-1956 {
+            width: 100%; height: 100%; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: radial-gradient(circle, #e0e0e0, #888);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .tv-static-1956 {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: repeating-radial-gradient(circle at 17% 32%, white, black 0.00085px);
+            animation: staticAnim 0.3s steps(4) infinite;
+            opacity: 1; transition: opacity 0.2s linear; pointer-events: none;
+        }
+
+        .tv-controls-1956 {
+            width: 90%; display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+
+        .tv-slider-1956 {
+            width: 100%; height: 20px; -webkit-appearance: none; background: #222; 
+            border-radius: 10px; outline: none; border: 2px solid #111;
+        }
+        .tv-slider-1956::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 45px; height: 45px; border-radius: 50%;
+            background: #d4af37; cursor: pointer; border: 4px solid #fff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        }
+
+        .score-1956 {
+            background: #111; color: #4CAF50; padding: 10px 20px;
+            border-radius: 10px; font-family: 'Courier New', monospace;
+            font-size: 1.2rem; font-weight: bold; border: 2px solid #333;
+        }
+
+        /* 1957 MINIGAME OVERLAY CSS */
+        .game-overlay-1957 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            background: #e0f7fa; overflow: hidden; /* Light financial blue */
+        }
+        .game-overlay-1957.active { opacity: 1; pointer-events: all; }
+
+        .game-area-1957 {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; touch-action: none; cursor: crosshair;
+        }
+
+        .score-1957 {
+            position: absolute; top: 80px; left: 50%; transform: translateX(-50%);
+            background: white; padding: 15px 30px; border-radius: 30px;
+            font-weight: bold; font-family: 'Playfair Display', serif; font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); color: #333; z-index: 10;
+            border: 3px solid #ff4081; /* Pink border */
+            white-space: nowrap;
+        }
+
+        .piggy-bank-1957 {
+            position: absolute; bottom: 30px; left: 50%;
+            font-size: 5rem; user-select: none; transform: translateX(-50%);
+            z-index: 10; pointer-events: none;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2));
+            transition: transform 0.1s;
+        }
+
+        .coin-1957 {
+            position: absolute; width: 40px; height: 40px;
+            background: radial-gradient(circle, #FFD700, #DAA520);
+            border-radius: 50%; border: 3px solid #B8860B;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: #8B6508; z-index: 5;
+            font-family: 'Courier New', monospace; font-size: 1.5rem;
+            box-shadow: inset 0 0 5px rgba(255,255,255,0.8), 0 5px 10px rgba(0,0,0,0.3);
+        }
+
+        /* 1958 MINIGAME OVERLAY CSS */
+        .game-overlay-1958 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; flex-direction: column;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            background: #87CEEB; overflow: hidden; /* Sky blue */
+        }
+        .game-overlay-1958.active { opacity: 1; pointer-events: all; }
+
+        .game-area-1958 {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            cursor: pointer; touch-action: manipulation;
+        }
+        .sea-1958 {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 35%;
+            background: rgba(0, 105, 148, 0.75);
+            border-top: 3px solid rgba(255,255,255,0.4); z-index: 4; pointer-events: none;
+        }
+        .crane-rail-1958 {
+            position: absolute; top: 120px; left: 0; width: 100%; height: 10px;
+            background: #2c3e50; z-index: 10; pointer-events: none;
+        }
+        .crane-1958 {
+            position: absolute; top: 110px; left: 50%;
+            width: 40px; height: 30px; background: #f39c12;
+            transform: translateX(-50%); z-index: 11;
+            pointer-events: none; border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .crane-1958::after {
+            content: ''; position: absolute; top: 30px; left: 18px;
+            width: 4px; height: 20px; background: #2c3e50;
+        }
+        .concrete-block-1958 {
+            position: absolute; bottom: 100%;
+            width: calc(100% / 15); height: 40px;
+            background: #95a5a6; border: 2px solid #7f8c8d;
+            box-sizing: border-box; z-index: 3;
+            transition: bottom 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+        }
+        .score-1958 {
+            position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
+            background: white; padding: 12px 24px; border-radius: 20px;
+            font-weight: bold; font-family: 'Playfair Display', serif; font-size: 1.3rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); color: #333; z-index: 20;
+            border: 3px solid #333; pointer-events: none; white-space: nowrap;
+        }
+
+        /* 1959 MINIGAME OVERLAY CSS */
+        .game-overlay-1959 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            background: #3e2723; /* Dark dirt brown */
+        }
+        .game-overlay-1959.active { opacity: 1; pointer-events: all; }
+
+        .score-1959 {
+            background: #fff; padding: 10px 20px; border-radius: 20px;
+            font-weight: bold; font-family: 'Playfair Display', serif; font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: #3e2723; z-index: 10;
+            margin-bottom: 20px; border: 3px solid #8d6e63;
+        }
+
+        .grid-1959 {
+            display: grid; grid-template-columns: repeat(12, 1fr);
+            gap: 4px; background: #2b1713; padding: 8px; border-radius: 8px;
+            width: 95%; max-width: 500px; max-height: 70vh; aspect-ratio: 1;
+        }
+
+        .cell-1959 {
+            background: #8d6e63; border-radius: 4px; cursor: pointer;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; transition: transform 0.1s, background 0.3s;
+        }
+        .cell-1959:hover { transform: scale(0.95); }
+        .cell-1959.revealed-empty { background: #5d4037; cursor: default; transform: scale(1); box-shadow: inset 0 0 15px rgba(0,0,0,0.6); }
+        .cell-1959.revealed-gas { background: #03a9f4; cursor: default; transform: scale(1); box-shadow: 0 0 10px #03a9f4; }
+
+        /* 1960 MINIGAME OVERLAY CSS */
+        .game-overlay-1960 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            background: #8B5A2B; /* Retro wood desk */
+            overflow: hidden;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+        }
+        .game-overlay-1960.active { opacity: 1; pointer-events: all; }
+        
+        .clock-1960 {
+            position: absolute; top: 20px; right: 20px;
+            width: 80px; height: 80px; border-radius: 50%;
+            background: white; border: 4px solid #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Courier New', monospace; font-size: 1.2rem; font-weight: bold;
+            color: #333; flex-direction: column; z-index: 20;
+        }
+
+        .score-1960 {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #fff; padding: 15px 30px; border-radius: 10px;
+            font-weight: bold; font-family: 'Courier New', monospace; font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: #333; z-index: 20;
+            border: 2px solid #333;
+        }
+
+        .document-1960 {
+            position: absolute; width: 60px; height: 80px;
+            background: #fff; border: 1px solid #ccc;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; cursor: pointer; user-select: none;
+            transition: transform 0.1s; z-index: 10;
+        }
+        .document-1960:active { transform: scale(0.9); }
+        
+        .document-1960::before {
+            content: ''; position: absolute; top: 10px; left: 10px; right: 10px; height: 2px; background: #eee;
+            box-shadow: 0 6px 0 #eee, 0 12px 0 #eee, 0 18px 0 #eee, 0 24px 0 #eee, 0 30px 0 #eee;
+        }
+
+        /* 1961 MINIGAME OVERLAY CSS */
+        .game-overlay-1961 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease, background-color 0.2s;
+            background: #555; /* dark grey asphalt */
+            overflow: hidden;
+        }
+        .game-overlay-1961.active { opacity: 1; pointer-events: all; }
+        .game-overlay-1961.flash-red { background: #802020; }
+        
+        .score-1961 {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #fff; padding: 10px 20px; border-radius: 20px;
+            font-weight: bold; font-family: 'Courier New', monospace; font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: #333; z-index: 20;
+            border: 3px solid #333; white-space: nowrap;
+        }
+
+        .game-area-1961 {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; touch-action: none; cursor: crosshair;
+        }
+
+        .player-1961 {
+            position: absolute; bottom: 40px; left: 50%; width: 30px; height: 30px;
+            background: #3498db; border-radius: 50%; border: 3px solid #ecf0f1;
+            transform: translateX(-50%); z-index: 10;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: left 0.05s ease-out; /* smooth follow */
+        }
+
+        .wall-1961 {
+            position: absolute; height: 30px;
+            background: #c0392b; /* Brick red */
+            background-image: linear-gradient(335deg, rgba(255,255,255,0.1) 1px, transparent 1px),
+                              linear-gradient(155deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 10px;
+            border: 2px solid #8e44ad; border-radius: 2px;
+            z-index: 5;
+        }
+
+        /* 1962 MINIGAME OVERLAY CSS */
+        .game-overlay-1962 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            background: #0277bd; /* Ocean blue */
+        }
+        .game-overlay-1962.active { opacity: 1; pointer-events: all; }
+        
+        .score-1962 {
+            background: rgba(255,255,255,0.9); padding: 10px 20px; border-radius: 20px;
+            font-weight: bold; font-family: 'Playfair Display', serif; font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: #01579b; z-index: 10;
+            margin-bottom: 20px; border: 3px solid #01579b;
+        }
+
+        .map-grid-1962 {
+            display: grid; grid-template-columns: repeat(15, 1fr);
+            gap: 2px; width: 95%; max-width: 800px; 
+            background: #01579b; padding: 4px; border: 4px solid #01579b; border-radius: 8px;
+            touch-action: none; /* prevent scrolling during swipe */
+        }
+
+        .map-cell-1962 {
+            aspect-ratio: 1;
+            background: #29b6f6; /* Light ocean blue */
+            cursor: pointer; transition: background 0.4s, transform 0.2s;
+            border-radius: 2px;
+        }
+        .map-cell-1962.revealed {
+            background: #689f38; /* Land green */
+            transform: scale(0.95);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        /* 1963 MINIGAME OVERLAY CSS */
+        .game-overlay-1963 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease, background-color 0.2s;
+            background: #e0f7fa; /* Ice blue */
+            overflow: hidden;
+        }
+        .game-overlay-1963.active { opacity: 1; pointer-events: all; }
+        .game-overlay-1963.flash-hit { background: #81d4fa; }
+        
+        .score-1963 {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #fff; padding: 10px 20px; border-radius: 20px;
+            font-weight: bold; font-family: 'Courier New', monospace; font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: #006064; z-index: 20;
+            border: 3px solid #006064; white-space: nowrap;
+        }
+
+        .game-area-1963 {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; touch-action: none;
+        }
+
+        .player-1963 {
+            position: absolute; bottom: 40px; left: 50%; width: 40px; height: 40px;
+            background: #ff5722; /* orange skater */
+            border-radius: 50% 50% 10% 10%; border: 2px solid #333;
+            transform: translateX(-50%); z-index: 10;
+            box-shadow: 0 10px 10px rgba(0,0,0,0.2);
+            transition: left 0.05s ease-out;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .obstacle-1963 {
+            position: absolute; z-index: 5; border-radius: 50%;
+        }
+        .obs-dune {
+            background: #ffffff;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.1);
+        }
+        .obs-hole {
+            background: #01579b;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+            border: 2px solid #4fc3f7;
+        }
+
+        /* 1964 MINIGAME OVERLAY CSS */
+        .game-overlay-1964 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            background: #111; /* Concert dark */
+            overflow: hidden;
+        }
+        .game-overlay-1964.active { opacity: 1; pointer-events: all; }
+        
+        .score-1964 {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #fff; padding: 10px 20px; border-radius: 20px;
+            font-weight: bold; font-family: 'Courier New', monospace; font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5); color: #222; z-index: 20;
+            border: 3px solid #f1c40f; white-space: nowrap;
+        }
+
+        .track-1964 {
+            position: absolute; top: 0; left: 50%; width: 140px; height: 100%;
+            transform: translateX(-50%); background: rgba(255,255,255,0.05);
+            border-left: 2px solid rgba(255,255,255,0.2); border-right: 2px solid rgba(255,255,255,0.2);
+            overflow: hidden;
+        }
+
+        .hitzone-1964 {
+            position: absolute; bottom: 100px; left: 50%; width: 160px; height: 60px;
+            transform: translateX(-50%); border: 4px solid #f1c40f; border-radius: 30px;
+            z-index: 10; box-shadow: 0 0 15px #f1c40f; transition: all 0.1s;
+        }
+        .hitzone-1964.active {
+            background: rgba(241, 196, 15, 0.3); box-shadow: 0 0 30px #f1c40f;
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        .note-1964 {
+            position: absolute; width: 60px; height: 60px; left: 50%;
+            transform: translateX(-50%); background: #e74c3c; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; z-index: 5; box-shadow: 0 5px 10px rgba(0,0,0,0.8);
+            border: 2px solid #fff; transition: opacity 0.2s, transform 0.2s;
+        }
+        .note-1964.hit {
+            background: #2ecc71; opacity: 0; transform: translateX(-50%) scale(1.5);
+        }
+
+        .btn-hit-1964 {
+            position: absolute; bottom: 20px; padding: 15px 40px; font-size: 1.2rem;
+            border-radius: 30px; background: #e74c3c; color: white; border: 2px solid #fff;
+            font-weight: bold; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            z-index: 30; user-select: none;
+        }
+        .btn-hit-1964:active { transform: scale(0.95); background: #c0392b; }
+        
+        /* 1965 MINIGAME OVERLAY CSS */
+        .game-overlay-1965 {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            background: #2c3e50; /* Dark asphalt */
+            overflow: hidden;
+        }
+        .game-overlay-1965.active { opacity: 1; pointer-events: all; }
+
+        .score-1965 {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #fff; padding: 10px 20px; border-radius: 20px;
+            font-weight: bold; font-family: 'Courier New', monospace; font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5); color: #2c3e50; z-index: 30;
+            border: 3px solid #bdc3c7; white-space: nowrap;
+        }
+
+        .game-area-1965 {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; background-image: radial-gradient(#34495e 1px, transparent 1px);
+            background-size: 40px 40px; /* simple street pattern */
+        }
+
+        .player-1965 {
+            position: absolute; width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; z-index: 20;
+            transition: transform 0.1s; /* smooth turning */
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));
+        }
+
+        .checkpoint-1965 {
+            position: absolute; width: 24px; height: 24px;
+            background: #ecf0f1; border-radius: 50%;
+            border: 3px solid #e74c3c;
+            box-shadow: 0 0 15px rgba(236, 240, 241, 0.8);
+            z-index: 10;
+            animation: pulse-1965 1.5s infinite;
+        }
+        @keyframes pulse-1965 {
+            0% { transform: scale(0.9); box-shadow: 0 0 10px rgba(236, 240, 241, 0.5); }
+            50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(236, 240, 241, 1); }
+            100% { transform: scale(0.9); box-shadow: 0 0 10px rgba(236, 240, 241, 0.5); }
+        }
+
+        .dpad-1965 {
+            position: absolute; bottom: 30px; right: 30px;
+            display: grid; grid-template-columns: 60px 60px 60px; gap: 5px; z-index: 40;
+        }
+        .dpad-btn {
+            width: 60px; height: 60px; background: rgba(236, 240, 241, 0.2);
+            border: 2px solid #ecf0f1; border-radius: 15px; color: #ecf0f1;
+            font-size: 2rem; display: flex; align-items: center; justify-content: center;
+            user-select: none; cursor: pointer; backdrop-filter: blur(5px);
+        }
+        .dpad-btn:active { background: rgba(236, 240, 241, 0.5); transform: scale(0.95); }
+        .dpad-up { grid-column: 2; grid-row: 1; }
+        .dpad-left { grid-column: 1; grid-row: 2; }
+        .dpad-down { grid-column: 2; grid-row: 2; }
+        .dpad-right { grid-column: 3; grid-row: 2; }
+
+        @media (max-width: 768px) {
+            .header-title { font-size: 1.6rem; }
+            .header-title span { font-size: 2.2rem; }
+            .grid-container { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+            .card { padding: 20px 15px; min-height: 180px; }
+            .year-label { font-size: 2rem; }
+            .modal-title { font-size: 2.4rem; }
+            .retro-modal h2 { font-size: 2rem; }
+            .retro-modal .quote { font-size: 0.95rem; }
+            .cable-grid { grid-template-columns: repeat(auto-fit, minmax(30px, 1fr)); gap: 8px; }
+            .plug { width: 30px; height: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 class="header-title">Geverifieerde Leeftijd: <span id="age-counter">-</span> / 75</h1>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </header>
+
+    <main>
+        <div class="grid-container" id="grid-container">
+            <!-- Cards will be injected by JavaScript -->
+        </div>
+    </main>
+
+    <footer>
+        <button class="reset-btn" id="reset-btn">Reset Voortgang (Test Modus)</button>
+    </footer>
+
+    <!-- MINIGAME OVERLAY: 1951 -->
+    <div id="game-overlay-1951" class="game-overlay">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1951)">← Terug</button>
+            <div class="game-year-display">1951</div>
+        </div>
+        <div class="bg-static"></div>
+        <div class="bg-test-pattern" id="bg-test-pattern"></div>
+        
+        <div class="game-content-1951" id="game-content-1951">
+            <h2 class="retro-title">Studio Irene</h2>
+            <div class="cable-counter-text">Kabels verbonden: <span id="cable-count-1951">0</span> / 75</div>
+            <div class="cable-grid" id="cable-grid-1951">
+                <!-- Plugs generated via JS -->
+            </div>
+        </div>
+        
+        <div class="retro-modal" id="win-modal-1951">
+            <h2>Uitzending in de lucht!</h2>
+            <div class="quote">
+                "Goedenavond dames en heren. Vanavond is het een heel bijzondere avond." Met deze woorden opent journaliste Jeanne Roos op 2 oktober 1951 de eerste officiële televisie-uitzending in Nederland.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1951()">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1952 -->
+    <div id="game-overlay-1952" class="game-overlay-1952">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1952)">← Terug</button>
+            <div class="game-year-display">1952</div>
+        </div>
+        <div class="game-area-1952" id="game-area-1952">
+            <div class="score-board-1952" id="score-1952">Donald Ducks gevangen: 0 / 75</div>
+            <div class="mailbox-1952" id="mailbox-1952"></div>
+        </div>
+        
+        <div class="retro-modal" id="win-modal-1952">
+            <h2>Brievenbus vol!</h2>
+            <div class="quote">
+                Het allereerste nummer van het 'vrolijke weekblad' valt bij miljoenen Nederlanders in de bus.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1952()">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1953 -->
+    <div id="game-overlay-1953" class="game-overlay-1953">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1953)">← Terug</button>
+            <div class="game-year-display">1953</div>
+        </div>
+        <div class="rain-1953"></div>
+        <div class="game-area-1953" id="game-area-1953">
+            <div class="game-ui-1953">
+                <div class="status-box-1953" id="score-1953">Zandzakken geplaatst: 0 / 75</div>
+                <div class="status-box-1953" id="timer-1953">Tijd: 75s</div>
+            </div>
+            <div class="dike-container-1953">
+                <div class="dike-grid-1953" id="dike-grid-1953"></div>
+            </div>
+        </div>
+        
+        <div class="retro-modal" id="win-modal-1953">
+            <h2>De dijk is gedicht!</h2>
+            <div class="quote">
+                Een verwoestende stormvloed in de nacht van 31 januari op 1 februari eist 1.836 levens in Zuidwest-Nederland.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1953()">Terug naar Dashboard</button>
+        </div>
+
+        <div class="retro-modal" id="lose-modal-1953">
+            <h2>De dijk is doorgebroken!</h2>
+            <div class="quote">
+                Je was net niet snel genoeg... Probeer het opnieuw.
+            </div>
+            <button class="retro-btn" onclick="startMinigame1953()">Probeer opnieuw</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1954 -->
+    <div id="game-overlay-1954" class="game-overlay-1954">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1954)">← Terug</button>
+            <div class="game-year-display">1954</div>
+        </div>
+        <div class="football-field-1954" id="football-field-1954"></div>
+        <div class="goal-1954"></div>
+        
+        <div class="game-ui-1954">
+            <div class="score-1954" id="score-1954">Doelpunten: 0 / 75</div>
+            <div class="timing-meter-1954" id="timing-meter-1954">
+                <div class="sweet-spot-1954" id="sweet-spot-1954"></div>
+                <div class="indicator-1954" id="indicator-1954"></div>
+            </div>
+            <button class="retro-btn" style="padding: 15px 40px; font-size: 1.5rem;" onclick="shootPenalty1954()">SCHIET!</button>
+        </div>
+        
+        <div class="retro-modal" id="win-modal-1954">
+            <h2>Doelpunt! Kampioen!</h2>
+            <div class="quote">
+                Na lang verzet van de KNVB wordt het betaald voetbal in Nederland officieel ingevoerd.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1954()">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1955 -->
+    <div id="game-overlay-1955" class="game-overlay-1955">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1955)">← Terug</button>
+            <div class="game-year-display" style="color: #111; text-shadow: 2px 2px 0px white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;">1955</div>
+        </div>
+        <div class="game-ui-1955">
+            <div class="score-1954" id="score-1955">Vlakjes ingekleurd: 0 / 75</div>
+        </div>
+        
+        <div class="coloring-grid-container-1955" id="coloring-grid-1955">
+            <!-- Cells injected via JS -->
+        </div>
+        
+        <div class="palette-1955">
+            <button class="color-btn-1955 active" style="background: #E1261C;" onclick="selectColor1955('#E1261C', this)"></button>
+            <button class="color-btn-1955" style="background: #F3CA00;" onclick="selectColor1955('#F3CA00', this)"></button>
+            <button class="color-btn-1955" style="background: #0057A4;" onclick="selectColor1955('#0057A4', this)"></button>
+            <button class="color-btn-1955" style="background: #00893A;" onclick="selectColor1955('#00893A', this)"></button>
+        </div>
+        
+        <div class="retro-modal" id="win-modal-1955">
+            <h2>Prachtig gekleurd!</h2>
+            <div class="quote">
+                Dick Bruna tekent het wereldberoemde konijntje voor het eerst in een prentenboek.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1955()">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1956 -->
+    <div id="game-overlay-1956" class="game-overlay-1956">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1956)">← Terug</button>
+            <div class="game-year-display">1956</div>
+        </div>
+        
+        <div class="tv-set-1956">
+            <div class="tv-screen-1956">
+                <div class="tv-content-1956">
+                    <h2 style="font-size: 2.5rem; color: #333; margin: 0;">NTS</h2>
+                    <p style="font-size: 1.2rem; color: #555; margin: 0;">Live Uitzending</p>
+                </div>
+                <div class="tv-static-1956" id="tv-static-1956"></div>
+            </div>
+            
+            <div class="tv-controls-1956">
+                <div class="score-1956" id="score-1956">Signaalsterkte: 0 / 75</div>
+                <input type="range" min="0" max="100" value="50" class="tv-slider-1956" id="tv-slider-1956">
+            </div>
+        </div>
+        
+        <div class="retro-modal" id="win-modal-1956">
+            <h2>Helder beeld!</h2>
+            <div class="quote">
+                De officiële landelijke start van de Nederlandse Televisie Stichting: tv kijken wordt een sociaal fenomeen.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1956()">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1957 -->
+    <div id="game-overlay-1957" class="game-overlay-1957">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1957)">← Terug</button>
+            <div class="game-year-display" style="color: #333; text-shadow: 2px 2px 0px white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;">1957</div>
+        </div>
+        
+        <div class="game-area-1957" id="game-area-1957">
+            <div class="score-1957" id="score-1957">AOW-opbouw: 0 / 75 muntjes</div>
+            <div class="piggy-bank-1957" id="piggy-bank-1957">🐖</div>
+        </div>
+        
+        <div class="retro-modal" id="win-modal-1957">
+            <h2>Pensioen opgebouwd!</h2>
+            <div class="quote">
+                De Algemene Ouderdomswet treedt in werking onder minister Suurhoff, een mijlpaal voor de verzorgingsstaat.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1957()">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1958 -->
+    <div id="game-overlay-1958" class="game-overlay-1958">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1958)">← Terug</button>
+            <div class="game-year-display" style="color: #333; text-shadow: 2px 2px 0px white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;">1958</div>
+        </div>
+        
+        <div class="game-area-1958" id="game-area-1958" onclick="dropBlock1958()">
+            <div class="sea-1958"></div>
+            <div class="crane-rail-1958"></div>
+            <div class="crane-1958" id="crane-1958"></div>
+            <div id="blocks-container-1958"></div>
+        </div>
+        
+        <div class="score-1958" id="score-1958">Betonblokken geplaatst: 0 / 75</div>
+        
+        <div class="retro-modal" id="win-modal-1958">
+            <h2>De dam is gesloten!</h2>
+            <div class="quote">
+                Als direct antwoord op 1953 begint Nederland aan de bouw van het grootste waterverdedigingssysteem ter wereld.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1958()">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1959 -->
+    <div id="game-overlay-1959" class="game-overlay-1959">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1959)">← Terug</button>
+            <div class="game-year-display" style="color: #fff;">1959</div>
+        </div>
+        
+        <div class="score-1959" id="score-1959">Gasbellen ontdekt: 0 / 75</div>
+        <div class="grid-1959" id="grid-1959"></div>
+        
+        <div class="retro-modal" id="win-modal-1959">
+            <h2>Enorme gasbel aangeboord!</h2>
+            <div class="quote">
+                De ontdekking van de enorme gasbel in Groningen verandert de Nederlandse economie voor decennia.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1959()">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1960 -->
+    <div id="game-overlay-1960" class="game-overlay-1960">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1960)">← Terug</button>
+            <div class="game-year-display" style="color: #fff; text-shadow: 2px 2px 0px #333, -1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333, 1px 1px 0 #333;">1960</div>
+        </div>
+        
+        <div class="clock-1960" id="clock-1960">09:00</div>
+        <div class="score-1960" id="score-1960">Dossiers verwerkt: 0 / 75</div>
+        
+        <div id="desk-area-1960" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; overflow: hidden; pointer-events: none;">
+            <!-- Documents will be spawned here -->
+        </div>
+        
+        <div class="retro-modal" id="win-modal-1960">
+            <h2>Klaar! Prettig weekend!</h2>
+            <div class="quote">
+                De werkweek van zes dagen wordt langzaam afgeschaft; Nederlanders krijgen voor het eerst een echt 'weekend'.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1960()">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1961 -->
+    <div id="game-overlay-1961" class="game-overlay-1961">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1961)">← Terug</button>
+            <div class="game-year-display" style="color: #fff; text-shadow: 2px 2px 0px #333, -1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333, 1px 1px 0 #333;">1961</div>
+        </div>
+        
+        <div class="score-1961" id="score-1961">Muren ontweken: 0 / 75</div>
+        
+        <div class="game-area-1961" id="game-area-1961">
+            <div class="player-1961" id="player-1961"></div>
+        </div>
+        
+        <div class="retro-modal" id="win-modal-1961">
+            <h2>Obstakels succesvol ontweken</h2>
+            <div class="quote">
+                Hoewel internationaal, grijpt de plotselinge deling van Berlijn de Nederlandse bevolking diep aan.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1961()">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1962 -->
+    <div id="game-overlay-1962" class="game-overlay-1962">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1962)">← Terug</button>
+            <div class="game-year-display" style="color: #fff; text-shadow: 2px 2px 0px #01579b, -1px -1px 0 #01579b, 1px -1px 0 #01579b, -1px 1px 0 #01579b, 1px 1px 0 #01579b;">1962</div>
+        </div>
+        
+        <div class="score-1962" id="score-1962">Kaartstukken geplaatst: 0 / 75</div>
+        <div class="map-grid-1962" id="map-grid-1962"></div>
+        
+        <div class="retro-modal" id="win-modal-1962">
+            <h2>Kaart compleet</h2>
+            <div class="quote">
+                Nederland verliest onder internationale druk zijn laatste grote kolonie in de Oost.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1962()">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1963 -->
+    <div id="game-overlay-1963" class="game-overlay-1963">
+        <div class="game-header">
+            <button class="close-game-btn" onclick="closeGameOverlay(1963)" style="background: #006064; color: white;">← Terug</button>
+            <div class="game-year-display" style="color: #006064; text-shadow: 2px 2px 0px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">1963</div>
+        </div>
+        
+        <div class="score-1963" id="score-1963">Obstakels ontweken: 0 / 75</div>
+        
+        <div class="game-area-1963" id="game-area-1963">
+            <div class="player-1963" id="player-1963">⛸️</div>
+        </div>
+        
+        <div class="retro-modal" id="win-modal-1963">
+            <h2>Finish bereikt!</h2>
+            <div class="quote">
+                De meest barre Elfstedentocht uit de geschiedenis, gewonnen door Reinier Paping, met slechts 69 wedstrijdrijders aan de finish.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1963()" style="background: #006064; color: white;">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1964 -->
+    <div id="game-overlay-1964" class="game-overlay-1964">
+        <div class="game-header" style="z-index: 40;">
+            <button class="close-game-btn" onclick="closeGameOverlay(1964)" style="background: #222; color: #f1c40f; border-color: #f1c40f;">← Terug</button>
+            <div class="game-year-display" style="color: #f1c40f; text-shadow: 2px 2px 0px #222, -1px -1px 0 #222, 1px -1px 0 #222, -1px 1px 0 #222, 1px 1px 0 #222;">1964</div>
+        </div>
+        
+        <div class="score-1964" id="score-1964">Akkoorden geraakt: 0 / 75</div>
+        
+        <div class="track-1964" id="track-1964"></div>
+        <div class="hitzone-1964" id="hitzone-1964"></div>
+        
+        <button class="btn-hit-1964" onmousedown="tryHit1964()" ontouchstart="event.preventDefault(); tryHit1964()">SLA AAN (Spatie)</button>
+        
+        <div class="retro-modal" id="win-modal-1964">
+            <h2>Wat een optreden!</h2>
+            <div class="quote">
+                De Britse band treedt op in een veilinghal in Noord-Holland, wat resulteert in massale hysterie.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1964()" style="background: #222; color: #f1c40f;">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- MINIGAME OVERLAY: 1965 -->
+    <div id="game-overlay-1965" class="game-overlay-1965">
+        <div class="game-header" style="z-index: 40;">
+            <button class="close-game-btn" onclick="closeGameOverlay(1965)" style="background: #ecf0f1; color: #2c3e50; border-color: #bdc3c7;">← Terug</button>
+            <div class="game-year-display" style="color: #ecf0f1; text-shadow: 2px 2px 0px #2c3e50, -1px -1px 0 #2c3e50, 1px -1px 0 #2c3e50, -1px 1px 0 #2c3e50, 1px 1px 0 #2c3e50;">1965</div>
+        </div>
+        
+        <div class="score-1965" id="score-1965">Checkpoints bereikt: 0 / 75</div>
+        
+        <div class="game-area-1965" id="game-area-1965">
+            <div class="player-1965" id="player-1965">🚲</div>
+        </div>
+
+        <div class="dpad-1965">
+            <div class="dpad-btn dpad-up" onmousedown="setDir1965('up', true)" onmouseup="setDir1965('up', false)" onmouseleave="setDir1965('up', false)" ontouchstart="event.preventDefault(); setDir1965('up', true)" ontouchend="event.preventDefault(); setDir1965('up', false)">↑</div>
+            <div class="dpad-btn dpad-left" onmousedown="setDir1965('left', true)" onmouseup="setDir1965('left', false)" onmouseleave="setDir1965('left', false)" ontouchstart="event.preventDefault(); setDir1965('left', true)" ontouchend="event.preventDefault(); setDir1965('left', false)">←</div>
+            <div class="dpad-btn dpad-down" onmousedown="setDir1965('down', true)" onmouseup="setDir1965('down', false)" onmouseleave="setDir1965('down', false)" ontouchstart="event.preventDefault(); setDir1965('down', true)" ontouchend="event.preventDefault(); setDir1965('down', false)">↓</div>
+            <div class="dpad-btn dpad-right" onmousedown="setDir1965('right', true)" onmouseup="setDir1965('right', false)" onmouseleave="setDir1965('right', false)" ontouchstart="event.preventDefault(); setDir1965('right', true)" ontouchend="event.preventDefault(); setDir1965('right', false)">→</div>
+        </div>
+        
+        <div class="retro-modal" id="win-modal-1965">
+            <h2>Rondrit voltooid!</h2>
+            <div class="quote">
+                Provo lanceert in Amsterdam het eerste, rebelse deelfietsenplan ter wereld.
+            </div>
+            <button class="retro-btn" onclick="finishMinigame1965()" style="background: #ecf0f1; color: #2c3e50;">Terug naar Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Final Celebration Modal -->
+    <div class="modal-overlay" id="celebration-modal">
+        <div class="modal-content">
+            <h2 class="modal-title">Gefeliciteerd! 🥂</h2>
+            <p class="modal-text">Je hebt alle 76 mini-games uitgespeeld en officieel bewezen dat je de respectabele, prachtige leeftijd van 76 jaar hebt bereikt. Op naar de volgende mijlpaal!</p>
+            <button class="modal-btn" onclick="closeModal()">Proost!</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const START_YEAR = 1951;
+        const TOTAL_YEARS = 76;
+        
+        // DOM Elements
+        const gridContainer = document.getElementById('grid-container');
+        const progressBar = document.getElementById('progress-bar');
+        const ageCounter = document.getElementById('age-counter');
+        const resetBtn = document.getElementById('reset-btn');
+        const modal = document.getElementById('celebration-modal');
+
+        // State
+        let completedGames = JSON.parse(localStorage.getItem('jubilee_progress')) || [];
+
+        const GAME_TITLES = {
+            1951: "De Eerste Uitzending",
+            1952: "Donald Duck",
+            1953: "De Watersnoodramp",
+            1954: "Betaald Voetbal",
+            1955: "Nijntje",
+            1956: "NTS Televisie",
+            1957: "Invoering AOW",
+            1958: "Deltawerken",
+            1959: "Slochteren",
+            1960: "Vrije Zaterdag",
+            1961: "Berlijnse Muur",
+            1962: "Nieuw-Guinea",
+            1963: "De Hel van '63",
+            1964: "The Beatles in Blokker",
+            1965: "Witte Fietsenplan"
+        };
+
+        // Generate ambient balloons in the background
+        function createAmbientBalloons() {
+            const emojis = ['🎈', '🎊', '🎉', '✨', '🥂'];
+            for(let i = 0; i < 15; i++) {
+                const b = document.createElement('div');
+                b.className = 'balloon';
+                b.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                b.style.left = Math.random() * 100 + 'vw';
+                b.style.animationDuration = (Math.random() * 15 + 15) + 's';
+                b.style.animationDelay = (Math.random() * 10) + 's';
+                b.style.fontSize = (Math.random() * 2 + 2) + 'rem';
+                document.body.appendChild(b);
+            }
+        }
+
+        // Initialize the Grid
+        function initGrid() {
+            gridContainer.innerHTML = '';
+            for (let i = 0; i < TOTAL_YEARS; i++) {
+                const year = START_YEAR + i;
+                const isCompleted = completedGames.includes(year);
+                
+                const card = document.createElement('div');
+                card.className = `card ${isCompleted ? 'completed' : ''}`;
+                card.id = `card-${year}`;
+                
+                card.innerHTML = `
+                    <div>
+                        <h2 class="year-label">${year}</h2>
+                        <p class="game-title">${GAME_TITLES[year] || "Spel " + (i + 1)}</p>
+                    </div>
+                    <button class="play-btn" onclick="playGame(${year})">Speel</button>
+                    <div class="completed-mark">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Voltooid
+                    </div>
+                `;
+                
+                gridContainer.appendChild(card);
+            }
+            updateDashboard(false);
+        }
+
+        function closeGameOverlay(year) {
+            const overlay = document.getElementById(`game-overlay-${year}`);
+            if (overlay) overlay.classList.remove('active');
+            
+            if (year === 1952) { clearInterval(spawnLoop1952); cancelAnimationFrame(gameLoop1952); }
+            if (year === 1953) { isPlaying1953 = false; clearInterval(timerInterval1953); clearInterval(leakSpawner1953); }
+            if (year === 1954) { isPlaying1954 = false; cancelAnimationFrame(penaltyLoop1954); }
+            if (year === 1956) { isPlaying1956 = false; cancelAnimationFrame(loop1956); }
+            if (year === 1957) { isPlaying1957 = false; cancelAnimationFrame(loop1957); }
+            if (year === 1958) { isPlaying1958 = false; cancelAnimationFrame(craneLoop1958); }
+            if (year === 1959) { isPlaying1959 = false; }
+            if (year === 1960) { isPlaying1960 = false; clearTimeout(spawnTimeout1960); }
+            if (year === 1961) { isPlaying1961 = false; cancelAnimationFrame(loop1961); }
+            if (year === 1962) { 
+                isPlaying1962 = false; 
+                window.removeEventListener('mouseup', stopDragging1962); 
+                const mg = document.getElementById('map-grid-1962'); 
+                if(mg) mg.removeEventListener('touchmove', handleTouchMove1962); 
+            }
+            if (year === 1963) { isPlaying1963 = false; cancelAnimationFrame(loop1963); }
+            if (year === 1964) { isPlaying1964 = false; cancelAnimationFrame(loop1964); document.removeEventListener('keydown', handleSpacebar1964); }
+            if (year === 1965) { isPlaying1965 = false; cancelAnimationFrame(loop1965); document.removeEventListener('keydown', handleKeyDown1965); document.removeEventListener('keyup', handleKeyUp1965); }
+        }
+
+        // Handle Play button click router
+        function playGame(year) {
+            if (year === 1951) {
+                startMinigame1951();
+            } else if (year === 1952) {
+                startMinigame1952();
+            } else if (year === 1953) {
+                startMinigame1953();
+            } else if (year === 1954) {
+                startMinigame1954();
+            } else if (year === 1955) {
+                startMinigame1955();
+            } else if (year === 1956) {
+                startMinigame1956();
+            } else if (year === 1957) {
+                startMinigame1957();
+            } else if (year === 1958) {
+                startMinigame1958();
+            } else if (year === 1959) {
+                startMinigame1959();
+            } else if (year === 1960) {
+                startMinigame1960();
+            } else if (year === 1961) {
+                startMinigame1961();
+            } else if (year === 1962) {
+                startMinigame1962();
+            } else if (year === 1963) {
+                startMinigame1963();
+            } else if (year === 1964) {
+                startMinigame1964();
+            } else if (year === 1965) {
+                startMinigame1965();
+            } else {
+                // Mock interaction for future games
+                if (!completedGames.includes(year)) {
+                    completeGame(year);
+                }
+            }
+        }
+
+        // Universal Game Completion Logic
+        function completeGame(year) {
+            if (!completedGames.includes(year)) {
+                completedGames.push(year);
+                localStorage.setItem('jubilee_progress', JSON.stringify(completedGames));
+                
+                // Update specific card visually
+                const card = document.getElementById(`card-${year}`);
+                if (card) {
+                    card.classList.add('completed');
+                    // Add a tiny local confetti pop on the card
+                    confetti({
+                        particleCount: 30,
+                        spread: 50,
+                        origin: {
+                            y: (card.getBoundingClientRect().top + (card.clientHeight / 2)) / window.innerHeight,
+                            x: (card.getBoundingClientRect().left + (card.clientWidth / 2)) / window.innerWidth
+                        },
+                        colors: ['#FFD700', '#D4AF37', '#E63946']
+                    });
+                }
+                
+                updateDashboard(true);
+            }
+        }
+
+        // ==========================================
+        // 1951 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_CABLES_1951 = 75;
+        let connectedCables1951 = 0;
+        
+        const overlay1951 = document.getElementById('game-overlay-1951');
+        const gameContent1951 = document.getElementById('game-content-1951');
+        const cableGrid1951 = document.getElementById('cable-grid-1951');
+        const cableCounter1951 = document.getElementById('cable-count-1951');
+        const testPatternBg = document.getElementById('bg-test-pattern');
+        const winModal1951 = document.getElementById('win-modal-1951');
+
+        function startMinigame1951() {
+            // Reset state
+            connectedCables1951 = 0;
+            cableCounter1951.innerText = connectedCables1951;
+            
+            testPatternBg.classList.remove('active');
+            winModal1951.classList.remove('active');
+            gameContent1951.style.opacity = '1';
+            gameContent1951.style.pointerEvents = 'all';
+            
+            cableGrid1951.innerHTML = ''; // Clear previous
+            
+            // Generate 75 plugs
+            for(let i=0; i<TOTAL_CABLES_1951; i++) {
+                const plug = document.createElement('div');
+                plug.className = 'plug';
+                plug.onclick = function() {
+                    if(!this.classList.contains('connected')) {
+                        this.classList.add('connected');
+                        connectedCables1951++;
+                        cableCounter1951.innerText = connectedCables1951;
+                        
+                        // Check Win Condition
+                        if(connectedCables1951 === TOTAL_CABLES_1951) {
+                            winMinigame1951();
+                        }
+                    }
+                };
+                cableGrid1951.appendChild(plug);
+            }
+            
+            // Show Overlay
+            overlay1951.classList.add('active');
+        }
+
+        function winMinigame1951() {
+            // Hide the grid content, show test pattern
+            gameContent1951.style.opacity = '0';
+            gameContent1951.style.pointerEvents = 'none';
+            testPatternBg.classList.add('active');
+            
+            // Wait slightly for the test pattern to fade in, then show modal
+            setTimeout(() => {
+                winModal1951.classList.add('active');
+                
+                // Add some thematic confetti
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#FFFFFF', '#FFFF00', '#00FFFF', '#00FF00', '#FF00FF', '#FF0000', '#0000FF']
+                });
+            }, 800);
+        }
+
+        function finishMinigame1951() {
+            // Close the overlay
+            overlay1951.classList.remove('active');
+            
+            // Trigger the general completion flow after transition
+            setTimeout(() => {
+                completeGame(1951);
+            }, 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1952 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_DUCKS_1952 = 75;
+        let caughtDucks1952 = 0;
+        let gameLoop1952;
+        let spawnLoop1952;
+        let magazines1952 = [];
+        
+        const overlay1952 = document.getElementById('game-overlay-1952');
+        const area1952 = document.getElementById('game-area-1952');
+        const mailbox1952 = document.getElementById('mailbox-1952');
+        const scoreUI1952 = document.getElementById('score-1952');
+        const winModal1952 = document.getElementById('win-modal-1952');
+
+        // Mouse/Touch movement logic
+        function moveMailbox1952(e) {
+            const rect = area1952.getBoundingClientRect();
+            let clientX;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+            } else if (e.clientX !== undefined) {
+                clientX = e.clientX;
+            } else {
+                return;
+            }
+            
+            let x = clientX - rect.left;
+            const mailboxWidth = 90;
+            // Constrain within game area
+            if (x < mailboxWidth / 2) x = mailboxWidth / 2;
+            if (x > rect.width - mailboxWidth / 2) x = rect.width - mailboxWidth / 2;
+            
+            mailbox1952.style.left = x + 'px';
+        }
+
+        area1952.addEventListener('mousemove', moveMailbox1952);
+        area1952.addEventListener('touchmove', (e) => { 
+            e.preventDefault(); // Prevent scrolling
+            moveMailbox1952(e); 
+        }, {passive: false});
+
+        function spawnMagazine1952() {
+            if (caughtDucks1952 >= TOTAL_DUCKS_1952) return;
+            
+            const mag = document.createElement('div');
+            mag.className = 'magazine-1952';
+            mag.innerText = Math.random() > 0.5 ? '📰' : '🦆';
+            
+            const rect = area1952.getBoundingClientRect();
+            const startX = Math.random() * (rect.width - 60) + 30; // Keep slightly off edges
+            mag.style.left = startX + 'px';
+            mag.style.top = '-50px';
+            
+            area1952.appendChild(mag);
+            magazines1952.push({
+                el: mag,
+                y: -50,
+                x: startX,
+                speed: 3 + Math.random() * 4, // Falls down
+                wobble: Math.random() * Math.PI * 2
+            });
+        }
+
+        function updateGameLoop1952() {
+            if (caughtDucks1952 >= TOTAL_DUCKS_1952) return;
+            
+            const areaRect = area1952.getBoundingClientRect();
+            // Get mailbox center X
+            let mbX = areaRect.width / 2; 
+            if(mailbox1952.style.left) {
+                mbX = parseFloat(mailbox1952.style.left);
+            }
+            
+            const mailboxTop = areaRect.height - 120; // mailbox height 120 + bottom 20
+
+            for(let i = magazines1952.length - 1; i >= 0; i--) {
+                let m = magazines1952[i];
+                m.y += m.speed;
+                m.wobble += 0.05; // horizontal drift speed
+                
+                // Add horizontal wobble for realistic falling leaf effect
+                let currentX = m.x + Math.sin(m.wobble) * 30;
+                
+                m.el.style.top = m.y + 'px';
+                m.el.style.left = currentX + 'px';
+                
+                let magBottom = m.y + 40; // Approx emoji height
+                
+                // Collision
+                if (magBottom >= mailboxTop && m.y < areaRect.height - 20) {
+                    if (Math.abs(currentX - mbX) < 65) {
+                        // Caught!
+                        m.el.remove();
+                        magazines1952.splice(i, 1);
+                        caughtDucks1952++;
+                        scoreUI1952.innerText = `Donald Ducks gevangen: ${caughtDucks1952} / ${TOTAL_DUCKS_1952}`;
+                        
+                        // Bounce effect on mailbox
+                        mailbox1952.style.transform = 'translateX(-50%) scale(1.15)';
+                        setTimeout(() => mailbox1952.style.transform = 'translateX(-50%) scale(1)', 100);
+                        
+                        if (caughtDucks1952 >= TOTAL_DUCKS_1952) {
+                            winMinigame1952();
+                        }
+                        continue;
+                    }
+                }
+                
+                // Missed, goes out of screen
+                if (m.y > areaRect.height) {
+                    m.el.remove();
+                    magazines1952.splice(i, 1);
+                }
+            }
+            
+            gameLoop1952 = requestAnimationFrame(updateGameLoop1952);
+        }
+
+        function startMinigame1952() {
+            // Reset
+            caughtDucks1952 = 0;
+            scoreUI1952.innerText = `Donald Ducks gevangen: 0 / ${TOTAL_DUCKS_1952}`;
+            winModal1952.classList.remove('active');
+            mailbox1952.style.left = '50%';
+            
+            // Clean up old magazines
+            magazines1952.forEach(m => m.el.remove());
+            magazines1952 = [];
+            
+            overlay1952.classList.add('active');
+            
+            // Start loops
+            spawnLoop1952 = setInterval(spawnMagazine1952, 350); // Speed of spawning
+            gameLoop1952 = requestAnimationFrame(updateGameLoop1952);
+        }
+
+        function winMinigame1952() {
+            clearInterval(spawnLoop1952);
+            cancelAnimationFrame(gameLoop1952);
+            
+            setTimeout(() => {
+                winModal1952.classList.add('active');
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#E63946', '#FFD700', '#FFFFFF']
+                });
+            }, 500);
+        }
+
+        function finishMinigame1952() {
+            overlay1952.classList.remove('active');
+            setTimeout(() => {
+                completeGame(1952);
+            }, 400);
+        }
+        // ==========================================
+
+
+        // ==========================================
+        // 1953 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_BAGS_1953 = 75;
+        const TIME_LIMIT_1953 = 75;
+        let bagsPlaced1953 = 0;
+        let timeLeft1953 = TIME_LIMIT_1953;
+        let isPlaying1953 = false;
+        let timerInterval1953;
+        let leakSpawner1953;
+        
+        const overlay1953 = document.getElementById('game-overlay-1953');
+        const area1953 = document.getElementById('game-area-1953');
+        const grid1953 = document.getElementById('dike-grid-1953');
+        const scoreUI1953 = document.getElementById('score-1953');
+        const timerUI1953 = document.getElementById('timer-1953');
+        const winModal1953 = document.getElementById('win-modal-1953');
+        const loseModal1953 = document.getElementById('lose-modal-1953');
+
+        function startMinigame1953() {
+            bagsPlaced1953 = 0;
+            timeLeft1953 = TIME_LIMIT_1953;
+            isPlaying1953 = true;
+            
+            scoreUI1953.innerText = `Zandzakken geplaatst: 0 / ${TOTAL_BAGS_1953}`;
+            timerUI1953.innerText = `Tijd: ${timeLeft1953}s`;
+            timerUI1953.classList.remove('danger');
+            
+            winModal1953.classList.remove('active');
+            loseModal1953.classList.remove('active');
+            area1953.style.opacity = '1';
+            
+            grid1953.innerHTML = '';
+            for(let i = 0; i < 20; i++) {
+                const hole = document.createElement('div');
+                hole.className = 'dike-hole';
+                hole.onclick = () => handleHoleClick1953(hole);
+                grid1953.appendChild(hole);
+            }
+            
+            overlay1953.classList.add('active');
+            
+            clearInterval(timerInterval1953);
+            clearInterval(leakSpawner1953);
+            
+            timerInterval1953 = setInterval(() => {
+                if(!isPlaying1953) return;
+                timeLeft1953--;
+                timerUI1953.innerText = `Tijd: ${timeLeft1953}s`;
+                if(timeLeft1953 <= 10) timerUI1953.classList.add('danger');
+                
+                if(timeLeft1953 <= 0) loseMinigame1953();
+            }, 1000);
+            
+            leakSpawner1953 = setInterval(() => {
+                if(!isPlaying1953) return;
+                spawnLeak1953();
+            }, 450); // fast spawn
+        }
+
+        function spawnLeak1953() {
+            const holes = Array.from(grid1953.children).filter(h => !h.classList.contains('leak') && !h.classList.contains('sandbag'));
+            if(holes.length === 0) return;
+            
+            const hole = holes[Math.floor(Math.random() * holes.length)];
+            hole.classList.add('leak');
+            
+            // Revert if not clicked
+            setTimeout(() => {
+                if(hole.classList.contains('leak')) {
+                    hole.classList.remove('leak');
+                }
+            }, 1200 + Math.random() * 800);
+        }
+
+        function handleHoleClick1953(hole) {
+            if(!isPlaying1953) return;
+            
+            if(hole.classList.contains('leak')) {
+                hole.classList.remove('leak');
+                hole.classList.add('sandbag');
+                
+                bagsPlaced1953++;
+                scoreUI1953.innerText = `Zandzakken geplaatst: ${bagsPlaced1953} / ${TOTAL_BAGS_1953}`;
+                
+                if(bagsPlaced1953 >= TOTAL_BAGS_1953) {
+                    winMinigame1953();
+                } else {
+                    setTimeout(() => {
+                        hole.classList.remove('sandbag');
+                    }, 800);
+                }
+            }
+        }
+
+        function winMinigame1953() {
+            isPlaying1953 = false;
+            clearInterval(timerInterval1953);
+            clearInterval(leakSpawner1953);
+            
+            area1953.style.opacity = '0';
+            setTimeout(() => winModal1953.classList.add('active'), 500);
+        }
+
+        function loseMinigame1953() {
+            isPlaying1953 = false;
+            clearInterval(timerInterval1953);
+            clearInterval(leakSpawner1953);
+            
+            area1953.style.opacity = '0';
+            setTimeout(() => loseModal1953.classList.add('active'), 500);
+        }
+
+        function finishMinigame1953() {
+            overlay1953.classList.remove('active');
+            setTimeout(() => completeGame(1953), 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1954 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_GOALS_1954 = 75;
+        let goalsScored1954 = 0;
+        let isPlaying1954 = false;
+        let penaltyLoop1954;
+        let indicatorX1954 = 0;
+        let indicatorDir1954 = 1;
+        
+        const overlay1954 = document.getElementById('game-overlay-1954');
+        const scoreUI1954 = document.getElementById('score-1954');
+        const indicator1954 = document.getElementById('indicator-1954');
+        const winModal1954 = document.getElementById('win-modal-1954');
+        const field1954 = document.getElementById('football-field-1954');
+
+        function startMinigame1954() {
+            goalsScored1954 = 0;
+            scoreUI1954.innerText = `Doelpunten: 0 / ${TOTAL_GOALS_1954}`;
+            winModal1954.classList.remove('active');
+            overlay1954.classList.add('active');
+            
+            isPlaying1954 = true;
+            indicatorX1954 = 0;
+            indicatorDir1954 = 1;
+            
+            cancelAnimationFrame(penaltyLoop1954);
+            penaltyLoop1954 = requestAnimationFrame(updatePenaltyLoop1954);
+        }
+
+        function updatePenaltyLoop1954() {
+            if(!isPlaying1954) return;
+            
+            // Speed increases slightly as score goes up
+            const speed = 1.2 + (goalsScored1954 * 0.04); 
+            indicatorX1954 += speed * indicatorDir1954;
+            
+            if(indicatorX1954 >= 100) { indicatorX1954 = 100; indicatorDir1954 = -1; }
+            if(indicatorX1954 <= 0) { indicatorX1954 = 0; indicatorDir1954 = 1; }
+            
+            indicator1954.style.left = indicatorX1954 + '%';
+            
+            penaltyLoop1954 = requestAnimationFrame(updatePenaltyLoop1954);
+        }
+
+        function shootPenalty1954() {
+            if(!isPlaying1954) return;
+            
+            // Sweet spot is between 40% and 60%
+            if(indicatorX1954 >= 40 && indicatorX1954 <= 60) {
+                // Success
+                goalsScored1954++;
+                scoreUI1954.innerText = `Doelpunten: ${goalsScored1954} / ${TOTAL_GOALS_1954}`;
+                
+                field1954.classList.remove('flash-success');
+                void field1954.offsetWidth; // trigger reflow
+                field1954.classList.add('flash-success');
+                
+                if(goalsScored1954 >= TOTAL_GOALS_1954) {
+                    winMinigame1954();
+                }
+            } else {
+                // Fail
+                field1954.classList.remove('flash-fail');
+                void field1954.offsetWidth;
+                field1954.classList.add('flash-fail');
+            }
+        }
+
+        function winMinigame1954() {
+            isPlaying1954 = false;
+            cancelAnimationFrame(penaltyLoop1954);
+            
+            setTimeout(() => {
+                winModal1954.classList.add('active');
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#4CAF50', '#FFFFFF', '#FFD700']
+                });
+            }, 300);
+        }
+
+        function finishMinigame1954() {
+            overlay1954.classList.remove('active');
+            setTimeout(() => completeGame(1954), 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1955 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_CELLS_1955 = 75;
+        let coloredCells1955 = 0;
+        let activeColor1955 = '#E1261C'; // Default to red
+        
+        const overlay1955 = document.getElementById('game-overlay-1955');
+        const grid1955 = document.getElementById('coloring-grid-1955');
+        const scoreUI1955 = document.getElementById('score-1955');
+        const winModal1955 = document.getElementById('win-modal-1955');
+
+        function selectColor1955(color, btnElem) {
+            activeColor1955 = color;
+            document.querySelectorAll('.color-btn-1955').forEach(btn => btn.classList.remove('active'));
+            btnElem.classList.add('active');
+        }
+
+        function startMinigame1955() {
+            coloredCells1955 = 0;
+            scoreUI1955.innerText = `Vlakjes ingekleurd: 0 / ${TOTAL_CELLS_1955}`;
+            winModal1955.classList.remove('active');
+            
+            const miffyMap = [
+                0, 1, 1, 1, 0, 1, 1, 1, 0,
+                0, 1, 1, 1, 0, 1, 1, 1, 0,
+                1, 1, 1, 1, 0, 1, 1, 1, 1,
+                1, 1, 1, 1, 0, 1, 1, 1, 1,
+                1, 1, 0, 1, 1, 1, 0, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 0, 1, 0, 1, 1, 1,
+                1, 1, 1, 1, 0, 1, 1, 1, 1,
+                1, 1, 1, 0, 1, 0, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1
+            ];
+
+            // Generate grid
+            grid1955.innerHTML = '';
+            for(let i = 0; i < miffyMap.length; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'coloring-cell-1955';
+                if (miffyMap[i] === 0) {
+                    cell.classList.add('black-cell');
+                } else {
+                    cell.dataset.colored = "false";
+                    cell.onclick = () => colorCell1955(cell);
+                }
+                grid1955.appendChild(cell);
+            }
+            
+            overlay1955.classList.add('active');
+        }
+
+        function colorCell1955(cell) {
+            if (cell.dataset.colored === "false") {
+                cell.style.background = activeColor1955;
+                cell.dataset.colored = "true";
+                coloredCells1955++;
+                scoreUI1955.innerText = `Vlakjes ingekleurd: ${coloredCells1955} / ${TOTAL_CELLS_1955}`;
+                
+                // Add slight bounce
+                cell.style.transform = "scale(0.8)";
+                setTimeout(() => cell.style.transform = "scale(1)", 100);
+                
+                if (coloredCells1955 >= TOTAL_CELLS_1955) {
+                    winMinigame1955();
+                }
+            } else {
+                // If already colored, allow changing color but don't increment counter
+                cell.style.background = activeColor1955;
+            }
+        }
+
+        function winMinigame1955() {
+            setTimeout(() => {
+                winModal1955.classList.add('active');
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#E1261C', '#F3CA00', '#0057A4', '#00893A'] // Bruna colors
+                });
+            }, 300);
+        }
+
+        function finishMinigame1955() {
+            overlay1955.classList.remove('active');
+            setTimeout(() => completeGame(1955), 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1956 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_SIGNAL_1956 = 75;
+        let signal1956 = 0;
+        let isPlaying1956 = false;
+        let sweetSpot1956 = 50;
+        let sweetSpotDir1956 = 1;
+        let loop1956;
+        
+        const overlay1956 = document.getElementById('game-overlay-1956');
+        const slider1956 = document.getElementById('tv-slider-1956');
+        const staticNoise1956 = document.getElementById('tv-static-1956');
+        const scoreUI1956 = document.getElementById('score-1956');
+        const winModal1956 = document.getElementById('win-modal-1956');
+
+        function startMinigame1956() {
+            signal1956 = 0;
+            sweetSpot1956 = Math.random() * 60 + 20; // 20 to 80
+            sweetSpotDir1956 = Math.random() > 0.5 ? 1 : -1;
+            slider1956.value = 50;
+            isPlaying1956 = true;
+            
+            scoreUI1956.innerText = `Signaalsterkte: 0 / ${TOTAL_SIGNAL_1956}`;
+            winModal1956.classList.remove('active');
+            staticNoise1956.style.opacity = 1;
+            
+            overlay1956.classList.add('active');
+            
+            cancelAnimationFrame(loop1956);
+            loop1956 = requestAnimationFrame(updateLoop1956);
+        }
+
+        function updateLoop1956() {
+            if(!isPlaying1956) return;
+            
+            // Move sweet spot slowly
+            sweetSpot1956 += 0.25 * sweetSpotDir1956;
+            if(sweetSpot1956 > 85) { sweetSpot1956 = 85; sweetSpotDir1956 = -1; }
+            if(sweetSpot1956 < 15) { sweetSpot1956 = 15; sweetSpotDir1956 = 1; }
+            
+            const playerVal = parseInt(slider1956.value);
+            const dist = Math.abs(playerVal - sweetSpot1956);
+            
+            // Map distance to opacity (max 1, min 0.1 so you always see some static until win)
+            let targetOpacity = dist / 20; 
+            if (targetOpacity > 1) targetOpacity = 1;
+            if (targetOpacity < 0.15) targetOpacity = 0.15; 
+            
+            staticNoise1956.style.opacity = targetOpacity;
+            
+            // Increase signal if dist < 12
+            if(dist < 12) {
+                signal1956 += 0.2; // roughly ~12 per second at 60fps
+                scoreUI1956.innerText = `Signaalsterkte: ${Math.floor(signal1956)} / ${TOTAL_SIGNAL_1956}`;
+                
+                if(signal1956 >= TOTAL_SIGNAL_1956) {
+                    winMinigame1956();
+                }
+            }
+            
+            if (isPlaying1956) {
+                loop1956 = requestAnimationFrame(updateLoop1956);
+            }
+        }
+
+        function winMinigame1956() {
+            isPlaying1956 = false;
+            cancelAnimationFrame(loop1956);
+            
+            staticNoise1956.style.opacity = 0; // completely clear image!
+            scoreUI1956.innerText = `Signaalsterkte: ${TOTAL_SIGNAL_1956} / ${TOTAL_SIGNAL_1956}`;
+            
+            setTimeout(() => {
+                winModal1956.classList.add('active');
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#FFFFFF', '#D4AF37', '#000000']
+                });
+            }, 800);
+        }
+
+        function finishMinigame1956() {
+            overlay1956.classList.remove('active');
+            setTimeout(() => completeGame(1956), 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1957 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_COINS_1957 = 75;
+        let score1957 = 0;
+        let isPlaying1957 = false;
+        let loop1957;
+        let spawnTimer1957 = 0;
+        let coins1957 = [];
+        let piggyX = window.innerWidth / 2;
+        
+        const overlay1957 = document.getElementById('game-overlay-1957');
+        const area1957 = document.getElementById('game-area-1957');
+        const piggy1957 = document.getElementById('piggy-bank-1957');
+        const scoreUI1957 = document.getElementById('score-1957');
+        const winModal1957 = document.getElementById('win-modal-1957');
+
+        // Input listeners for piggy bank
+        area1957.addEventListener('mousemove', (e) => {
+            if (isPlaying1957) piggyX = e.clientX;
+        });
+        area1957.addEventListener('touchmove', (e) => {
+            if (isPlaying1957) {
+                piggyX = e.touches[0].clientX;
+                e.preventDefault(); // Prevent scrolling
+            }
+        }, { passive: false });
+
+        function startMinigame1957() {
+            score1957 = 0;
+            piggyX = window.innerWidth / 2;
+            coins1957.forEach(c => c.elem.remove());
+            coins1957 = [];
+            spawnTimer1957 = 0;
+            
+            scoreUI1957.innerText = `AOW-opbouw: 0 / ${TOTAL_COINS_1957} muntjes`;
+            winModal1957.classList.remove('active');
+            
+            overlay1957.classList.add('active');
+            isPlaying1957 = true;
+            
+            cancelAnimationFrame(loop1957);
+            loop1957 = requestAnimationFrame(updateLoop1957);
+        }
+
+        function updateLoop1957() {
+            if(!isPlaying1957) return;
+            
+            // Move piggy bank
+            piggy1957.style.left = piggyX + 'px';
+            
+            // Spawn coins
+            spawnTimer1957++;
+            if (spawnTimer1957 > 15) { // Spawn rate
+                spawnTimer1957 = 0;
+                spawnCoin1957();
+            }
+            
+            // Piggy bank hit box (approximate)
+            const piggyRect = piggy1957.getBoundingClientRect();
+            const hitY = window.innerHeight - 80; // approximate y pos of piggy bank
+            
+            // Move and check coins
+            for (let i = coins1957.length - 1; i >= 0; i--) {
+                const coin = coins1957[i];
+                coin.y += coin.speed;
+                coin.elem.style.top = coin.y + 'px';
+                
+                // Check collision
+                if (coin.y > hitY - 40 && coin.y < hitY + 40) {
+                    if (Math.abs(coin.x - piggyX) < 60) {
+                        // Caught!
+                        coin.elem.remove();
+                        coins1957.splice(i, 1);
+                        score1957++;
+                        scoreUI1957.innerText = `AOW-opbouw: ${score1957} / ${TOTAL_COINS_1957} muntjes`;
+                        
+                        // Small bounce effect on piggy bank
+                        piggy1957.style.transform = 'translateX(-50%) scale(1.2)';
+                        setTimeout(() => { piggy1957.style.transform = 'translateX(-50%) scale(1)'; }, 100);
+                        
+                        if (score1957 >= TOTAL_COINS_1957) {
+                            winMinigame1957();
+                        }
+                        continue; // skip to next coin
+                    }
+                }
+                
+                // Remove if off screen
+                if (coin.y > window.innerHeight + 50) {
+                    coin.elem.remove();
+                    coins1957.splice(i, 1);
+                }
+            }
+            
+            if (isPlaying1957) {
+                loop1957 = requestAnimationFrame(updateLoop1957);
+            }
+        }
+        
+        function spawnCoin1957() {
+            if (score1957 + coins1957.length >= TOTAL_COINS_1957) return; // Don't overspawn
+            
+            const coinElem = document.createElement('div');
+            coinElem.className = 'coin-1957';
+            coinElem.innerText = 'ƒ'; // Gulden symbol
+            
+            const startX = Math.random() * (window.innerWidth - 60) + 30;
+            const coinObj = {
+                elem: coinElem,
+                x: startX,
+                y: -50,
+                speed: Math.random() * 3 + 4 // Speed between 4 and 7
+            };
+            
+            coinElem.style.left = startX + 'px';
+            coinElem.style.top = '-50px';
+            
+            area1957.appendChild(coinElem);
+            coins1957.push(coinObj);
+        }
+
+        function winMinigame1957() {
+            isPlaying1957 = false;
+            cancelAnimationFrame(loop1957);
+            
+            setTimeout(() => {
+                winModal1957.classList.add('active');
+                confetti({
+                    particleCount: 200,
+                    spread: 100,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#FFD700', '#DAA520', '#FF69B4']
+                });
+            }, 500);
+        }
+
+        function finishMinigame1957() {
+            overlay1957.classList.remove('active');
+            setTimeout(() => completeGame(1957), 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1958 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_BLOCKS_1958 = 75;
+        const COLUMNS_1958 = 15;
+        let blocksPlaced1958 = 0;
+        let isPlaying1958 = false;
+        let craneLoop1958;
+        let craneX1958 = 0; // percentage
+        let craneDir1958 = 1;
+        let columnHeights1958 = new Array(COLUMNS_1958).fill(0);
+        
+        const overlay1958 = document.getElementById('game-overlay-1958');
+        const crane1958 = document.getElementById('crane-1958');
+        const blocksContainer1958 = document.getElementById('blocks-container-1958');
+        const scoreUI1958 = document.getElementById('score-1958');
+        const winModal1958 = document.getElementById('win-modal-1958');
+
+        function startMinigame1958() {
+            blocksPlaced1958 = 0;
+            craneX1958 = 0;
+            craneDir1958 = 1;
+            columnHeights1958.fill(0);
+            blocksContainer1958.innerHTML = '';
+            
+            scoreUI1958.innerText = `Betonblokken geplaatst: 0 / ${TOTAL_BLOCKS_1958}`;
+            winModal1958.classList.remove('active');
+            
+            overlay1958.classList.add('active');
+            isPlaying1958 = true;
+            
+            cancelAnimationFrame(craneLoop1958);
+            craneLoop1958 = requestAnimationFrame(updateCrane1958);
+        }
+
+        function updateCrane1958() {
+            if (!isPlaying1958) return;
+            
+            craneX1958 += 1.5 * craneDir1958; // speed
+            if (craneX1958 >= 95) { craneX1958 = 95; craneDir1958 = -1; }
+            if (craneX1958 <= 0) { craneX1958 = 0; craneDir1958 = 1; }
+            
+            crane1958.style.left = craneX1958 + '%';
+            
+            if (isPlaying1958) craneLoop1958 = requestAnimationFrame(updateCrane1958);
+        }
+
+        function dropBlock1958() {
+            if (!isPlaying1958 || blocksPlaced1958 >= TOTAL_BLOCKS_1958) return;
+            
+            // Calculate which column it falls into (0 to 14) based on crane position
+            let col = Math.floor((craneX1958 / 100) * COLUMNS_1958);
+            if (col >= COLUMNS_1958) col = COLUMNS_1958 - 1;
+            
+            const block = document.createElement('div');
+            block.className = 'concrete-block-1958';
+            block.style.left = (col * (100 / COLUMNS_1958)) + '%';
+            block.style.bottom = '100%'; // Start at top
+            
+            blocksContainer1958.appendChild(block);
+            
+            // Target bottom in pixels based on how many blocks are in the column
+            const targetBottom = columnHeights1958[col] * 40; 
+            
+            // Small delay to trigger CSS transition
+            setTimeout(() => {
+                block.style.bottom = targetBottom + 'px';
+            }, 10);
+            
+            columnHeights1958[col]++;
+            blocksPlaced1958++;
+            
+            scoreUI1958.innerText = `Betonblokken geplaatst: ${blocksPlaced1958} / ${TOTAL_BLOCKS_1958}`;
+            
+            if (blocksPlaced1958 >= TOTAL_BLOCKS_1958) {
+                winMinigame1958();
+            }
+        }
+
+        function winMinigame1958() {
+            isPlaying1958 = false;
+            cancelAnimationFrame(craneLoop1958);
+            
+            setTimeout(() => {
+                winModal1958.classList.add('active');
+                confetti({
+                    particleCount: 150,
+                    spread: 100,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#7f8c8d', '#bdc3c7', '#3498db']
+                });
+            }, 500);
+        }
+
+        function finishMinigame1958() {
+            overlay1958.classList.remove('active');
+            setTimeout(() => completeGame(1958), 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1959 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_GAS_1959 = 75;
+        const GRID_SIZE_1959 = 144; // 12x12
+        let gasFound1959 = 0;
+        let isPlaying1959 = false;
+        let cellsData1959 = [];
+        
+        const overlay1959 = document.getElementById('game-overlay-1959');
+        const grid1959 = document.getElementById('grid-1959');
+        const scoreUI1959 = document.getElementById('score-1959');
+        const winModal1959 = document.getElementById('win-modal-1959');
+
+        function startMinigame1959() {
+            gasFound1959 = 0;
+            isPlaying1959 = true;
+            scoreUI1959.innerText = `Gasbellen ontdekt: 0 / ${TOTAL_GAS_1959}`;
+            winModal1959.classList.remove('active');
+            
+            // Generate board data
+            cellsData1959 = new Array(GRID_SIZE_1959).fill(false);
+            let placed = 0;
+            while(placed < TOTAL_GAS_1959) {
+                const idx = Math.floor(Math.random() * GRID_SIZE_1959);
+                if (!cellsData1959[idx]) {
+                    cellsData1959[idx] = true;
+                    placed++;
+                }
+            }
+            
+            // Render grid
+            grid1959.innerHTML = '';
+            for(let i = 0; i < GRID_SIZE_1959; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell-1959';
+                cell.onclick = () => clickCell1959(cell, i);
+                grid1959.appendChild(cell);
+            }
+            
+            overlay1959.classList.add('active');
+        }
+
+        function clickCell1959(cell, index) {
+            if (!isPlaying1959 || cell.classList.contains('revealed-gas') || cell.classList.contains('revealed-empty')) return;
+            
+            if (cellsData1959[index]) {
+                cell.classList.add('revealed-gas');
+                cell.innerText = '🔥';
+                gasFound1959++;
+                scoreUI1959.innerText = `Gasbellen ontdekt: ${gasFound1959} / ${TOTAL_GAS_1959}`;
+                
+                if (gasFound1959 >= TOTAL_GAS_1959) {
+                    winMinigame1959();
+                }
+            } else {
+                cell.classList.add('revealed-empty');
+            }
+        }
+
+        function winMinigame1959() {
+            isPlaying1959 = false;
+            setTimeout(() => {
+                winModal1959.classList.add('active');
+                confetti({
+                    particleCount: 150,
+                    spread: 120,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#03a9f4', '#81d4fa', '#e1f5fe']
+                });
+            }, 400);
+        }
+
+        function finishMinigame1959() {
+            overlay1959.classList.remove('active');
+            setTimeout(() => completeGame(1959), 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1960 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_DOCS_1960 = 75;
+        let docsProcessed1960 = 0;
+        let isPlaying1960 = false;
+        let activeDocs1960 = 0;
+        let spawnTimeout1960;
+        
+        const overlay1960 = document.getElementById('game-overlay-1960');
+        const deskArea1960 = document.getElementById('desk-area-1960');
+        const scoreUI1960 = document.getElementById('score-1960');
+        const clockUI1960 = document.getElementById('clock-1960');
+        const winModal1960 = document.getElementById('win-modal-1960');
+
+        function startMinigame1960() {
+            docsProcessed1960 = 0;
+            activeDocs1960 = 0;
+            isPlaying1960 = true;
+            deskArea1960.innerHTML = ''; // clear docs
+            clearTimeout(spawnTimeout1960);
+            
+            updateUI1960();
+            winModal1960.classList.remove('active');
+            overlay1960.classList.add('active');
+            
+            // Initial spawn
+            for(let i=0; i<3; i++) {
+                spawnDocument1960();
+            }
+        }
+        
+        function updateUI1960() {
+            scoreUI1960.innerText = `Dossiers verwerkt: ${docsProcessed1960} / ${TOTAL_DOCS_1960}`;
+            
+            // Map 0 -> 75 to 09:00 -> 17:00 (8 hours = 480 minutes)
+            const totalMinutes = Math.floor((docsProcessed1960 / TOTAL_DOCS_1960) * 480);
+            const hours = 9 + Math.floor(totalMinutes / 60);
+            const mins = totalMinutes % 60;
+            
+            const hStr = hours < 10 ? '0'+hours : hours;
+            const mStr = mins < 10 ? '0'+mins : mins;
+            clockUI1960.innerText = `${hStr}:${mStr}`;
+        }
+
+        function spawnDocument1960() {
+            if (!isPlaying1960 || docsProcessed1960 + activeDocs1960 >= TOTAL_DOCS_1960) return;
+            if (activeDocs1960 >= 6) {
+                // Don't clutter too much, try again shortly
+                spawnTimeout1960 = setTimeout(spawnDocument1960, 500);
+                return;
+            }
+            
+            const doc = document.createElement('div');
+            doc.className = 'document-1960';
+            doc.style.pointerEvents = 'all'; // allow clicks
+            
+            // Random position (avoiding extreme edges and UI)
+            const padding = 100;
+            const maxX = window.innerWidth - padding - 60;
+            const maxY = window.innerHeight - padding - 80;
+            
+            let x = Math.random() * maxX + (padding/2);
+            let y = Math.random() * maxY + (padding/2);
+            
+            // Avoid clock area (top right) and score area (top center)
+            if (y < 120) y = 120 + Math.random() * 100;
+            
+            doc.style.left = x + 'px';
+            doc.style.top = y + 'px';
+            doc.style.transform = `rotate(${(Math.random() - 0.5) * 60}deg)`; // random rotation
+            
+            // Interaction
+            doc.onmousedown = () => processDocument1960(doc);
+            doc.ontouchstart = (e) => { e.preventDefault(); processDocument1960(doc); };
+            
+            deskArea1960.appendChild(doc);
+            activeDocs1960++;
+            
+            // Schedule next spawn based on how many are active (faster if desk is empty)
+            const delay = Math.random() * 400 + 200;
+            spawnTimeout1960 = setTimeout(spawnDocument1960, delay);
+        }
+        
+        function processDocument1960(docElem) {
+            if (!isPlaying1960) return;
+            
+            // "Stamp" effect
+            docElem.innerHTML = '<span style="color:red; font-size: 1.5rem; transform: rotate(-15deg); font-family: serif; border: 2px solid red; padding: 2px; border-radius: 4px;">OK</span>';
+            docElem.onmousedown = null;
+            docElem.ontouchstart = null;
+            
+            setTimeout(() => {
+                docElem.remove();
+                activeDocs1960--;
+                docsProcessed1960++;
+                updateUI1960();
+                
+                if (docsProcessed1960 >= TOTAL_DOCS_1960) {
+                    winMinigame1960();
+                } else if (activeDocs1960 < 2) {
+                    // Force a spawn if we cleared too fast
+                    spawnDocument1960();
+                }
+            }, 100);
+        }
+
+        function winMinigame1960() {
+            isPlaying1960 = false;
+            clearTimeout(spawnTimeout1960);
+            
+            setTimeout(() => {
+                winModal1960.classList.add('active');
+                confetti({
+                    particleCount: 200,
+                    spread: 120,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#ffffff', '#f1c40f', '#e74c3c']
+                });
+            }, 400);
+        }
+
+        function finishMinigame1960() {
+            overlay1960.classList.remove('active');
+            setTimeout(() => completeGame(1960), 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1961 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_WALLS_1961 = 75;
+        let score1961 = 0;
+        let isPlaying1961 = false;
+        let loop1961;
+        let spawnTimer1961 = 0;
+        let walls1961 = [];
+        let playerX1961 = window.innerWidth / 2;
+        let keys1961 = { left: false, right: false };
+        
+        const overlay1961 = document.getElementById('game-overlay-1961');
+        const area1961 = document.getElementById('game-area-1961');
+        const player1961 = document.getElementById('player-1961');
+        const scoreUI1961 = document.getElementById('score-1961');
+        const winModal1961 = document.getElementById('win-modal-1961');
+
+        // Input listeners for player
+        area1961.addEventListener('mousemove', (e) => {
+            if (isPlaying1961) playerX1961 = e.clientX;
+        });
+        area1961.addEventListener('touchmove', (e) => {
+            if (isPlaying1961) {
+                playerX1961 = e.touches[0].clientX;
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // Arrow keys input
+        document.addEventListener('keydown', (e) => {
+            if(!isPlaying1961) return;
+            if(e.key === 'ArrowLeft') keys1961.left = true;
+            if(e.key === 'ArrowRight') keys1961.right = true;
+        });
+        document.addEventListener('keyup', (e) => {
+            if(!isPlaying1961) return;
+            if(e.key === 'ArrowLeft') keys1961.left = false;
+            if(e.key === 'ArrowRight') keys1961.right = false;
+        });
+
+        function startMinigame1961() {
+            score1961 = 0;
+            playerX1961 = window.innerWidth / 2;
+            keys1961 = { left: false, right: false };
+            walls1961.forEach(w => w.elem.remove());
+            walls1961 = [];
+            spawnTimer1961 = 0;
+            overlay1961.classList.remove('flash-red');
+            
+            scoreUI1961.innerText = `Muren ontweken: 0 / ${TOTAL_WALLS_1961}`;
+            winModal1961.classList.remove('active');
+            
+            overlay1961.classList.add('active');
+            isPlaying1961 = true;
+            
+            cancelAnimationFrame(loop1961);
+            loop1961 = requestAnimationFrame(updateLoop1961);
+        }
+
+        function updateLoop1961() {
+            if(!isPlaying1961) return;
+            
+            // Keyboard logic
+            if (keys1961.left) playerX1961 -= 7;
+            if (keys1961.right) playerX1961 += 7;
+            
+            // Constraint
+            if (playerX1961 < 15) playerX1961 = 15;
+            if (playerX1961 > window.innerWidth - 15) playerX1961 = window.innerWidth - 15;
+            
+            player1961.style.left = playerX1961 + 'px';
+            
+            // Spawn walls
+            spawnTimer1961++;
+            if (spawnTimer1961 > 45) { // Spawn rate
+                spawnTimer1961 = 0;
+                spawnWallPair1961();
+            }
+            
+            const hitY = window.innerHeight - 40; // Player bottom center roughly at window.innerHeight - 40
+            const playerRect = { left: playerX1961 - 15, right: playerX1961 + 15, top: hitY - 30, bottom: hitY };
+            
+            // Move walls
+            for (let i = walls1961.length - 1; i >= 0; i--) {
+                const wall = walls1961[i];
+                wall.y += wall.speed;
+                wall.elem.style.top = wall.y + 'px';
+                
+                const wallRect = { left: wall.x, right: wall.x + wall.width, top: wall.y, bottom: wall.y + 30 };
+                
+                // Collision check
+                if (!wall.passed && !wall.hit) {
+                    if (playerRect.left < wallRect.right && playerRect.right > wallRect.left &&
+                        playerRect.top < wallRect.bottom && playerRect.bottom > wallRect.top) {
+                        
+                        wall.hit = true;
+                        if (wall.pair) wall.pair.hit = true; // Mark pair as hit so we don't flash twice
+                        
+                        overlay1961.classList.add('flash-red');
+                        setTimeout(() => { if (isPlaying1961) overlay1961.classList.remove('flash-red'); }, 200);
+                    }
+                }
+                
+                // Scored (Passed player)
+                if (!wall.passed && wall.y > hitY + 30) {
+                    wall.passed = true;
+                    // Only score once per row (use the left wall as scorer)
+                    if (wall.isScorer && !wall.hit) {
+                        score1961++;
+                        scoreUI1961.innerText = `Muren ontweken: ${score1961} / ${TOTAL_WALLS_1961}`;
+                        if (score1961 >= TOTAL_WALLS_1961) {
+                            winMinigame1961();
+                        }
+                    }
+                }
+                
+                // Remove if off screen
+                if (wall.y > window.innerHeight + 50) {
+                    wall.elem.remove();
+                    walls1961.splice(i, 1);
+                }
+            }
+            
+            if (isPlaying1961) {
+                loop1961 = requestAnimationFrame(updateLoop1961);
+            }
+        }
+        
+        function spawnWallPair1961() {
+            if (score1961 >= TOTAL_WALLS_1961) return;
+            
+            const gapWidth = 100; // Gap for player to pass through
+            const maxLeftWidth = window.innerWidth - gapWidth - 20; 
+            let leftWidth = Math.random() * maxLeftWidth + 10;
+            
+            if(leftWidth < 0) leftWidth = 0;
+            
+            const speed = 4 + Math.random() * 3; // Speed between 4 and 7
+            
+            // Left Wall
+            const lwElem = document.createElement('div');
+            lwElem.className = 'wall-1961';
+            lwElem.style.left = '0px';
+            lwElem.style.width = leftWidth + 'px';
+            lwElem.style.top = '-50px';
+            area1961.appendChild(lwElem);
+            
+            const lw = { elem: lwElem, x: 0, y: -50, width: leftWidth, speed: speed, passed: false, hit: false, isScorer: true, pair: null };
+            
+            // Right Wall
+            const rightX = leftWidth + gapWidth;
+            const rightWidth = window.innerWidth - rightX;
+            const rwElem = document.createElement('div');
+            rwElem.className = 'wall-1961';
+            rwElem.style.left = rightX + 'px';
+            rwElem.style.width = rightWidth + 'px';
+            rwElem.style.top = '-50px';
+            area1961.appendChild(rwElem);
+            
+            const rw = { elem: rwElem, x: rightX, y: -50, width: rightWidth, speed: speed, passed: false, hit: false, isScorer: false, pair: lw };
+            lw.pair = rw;
+            
+            walls1961.push(lw, rw);
+        }
+
+        function winMinigame1961() {
+            isPlaying1961 = false;
+            cancelAnimationFrame(loop1961);
+            
+            setTimeout(() => {
+                winModal1961.classList.add('active');
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#c0392b', '#7f8c8d', '#bdc3c7']
+                });
+            }, 300);
+        }
+
+        function finishMinigame1961() {
+            overlay1961.classList.remove('active');
+            setTimeout(() => completeGame(1961), 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1962 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_MAP_PIECES_1962 = 75;
+        let piecesPlaced1962 = 0;
+        let isPlaying1962 = false;
+        let isDragging1962 = false;
+        
+        const overlay1962 = document.getElementById('game-overlay-1962');
+        const mapGrid1962 = document.getElementById('map-grid-1962');
+        const scoreUI1962 = document.getElementById('score-1962');
+        const winModal1962 = document.getElementById('win-modal-1962');
+
+        function startMinigame1962() {
+            piecesPlaced1962 = 0;
+            isPlaying1962 = true;
+            isDragging1962 = false;
+            
+            scoreUI1962.innerText = `Kaartstukken geplaatst: 0 / \${TOTAL_MAP_PIECES_1962}`;
+            winModal1962.classList.remove('active');
+            
+            // Generate grid
+            mapGrid1962.innerHTML = '';
+            for(let i = 0; i < TOTAL_MAP_PIECES_1962; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'map-cell-1962';
+                
+                // Mouse events for drag-to-paint
+                cell.addEventListener('mousedown', (e) => {
+                    isDragging1962 = true;
+                    revealMapPiece1962(cell);
+                    e.preventDefault();
+                });
+                cell.addEventListener('mouseenter', () => {
+                    if(isDragging1962) revealMapPiece1962(cell);
+                });
+                
+                mapGrid1962.appendChild(cell);
+            }
+            
+            // Global mouse up to stop dragging
+            window.addEventListener('mouseup', stopDragging1962);
+            
+            // Touch events for mobile swipe
+            mapGrid1962.addEventListener('touchmove', handleTouchMove1962, {passive: false});
+            
+            overlay1962.classList.add('active');
+        }
+
+        function stopDragging1962() {
+            isDragging1962 = false;
+        }
+
+        function handleTouchMove1962(e) {
+            if(!isPlaying1962) return;
+            e.preventDefault(); // Prevent scrolling while drawing the map
+            const touch = e.touches[0];
+            const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+            if(elem && elem.classList.contains('map-cell-1962')) {
+                revealMapPiece1962(elem);
+            }
+        }
+
+        function revealMapPiece1962(cell) {
+            if(!isPlaying1962 || cell.classList.contains('revealed')) return;
+            
+            cell.classList.add('revealed');
+            piecesPlaced1962++;
+            scoreUI1962.innerText = `Kaartstukken geplaatst: \${piecesPlaced1962} / \${TOTAL_MAP_PIECES_1962}`;
+            
+            if(piecesPlaced1962 >= TOTAL_MAP_PIECES_1962) {
+                winMinigame1962();
+            }
+        }
+
+        function winMinigame1962() {
+            isPlaying1962 = false;
+            window.removeEventListener('mouseup', stopDragging1962);
+            mapGrid1962.removeEventListener('touchmove', handleTouchMove1962);
+            
+            setTimeout(() => {
+                winModal1962.classList.add('active');
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#689f38', '#8bc34a', '#4caf50']
+                });
+            }, 300);
+        }
+
+        function finishMinigame1962() {
+            overlay1962.classList.remove('active');
+            setTimeout(() => completeGame(1962), 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1963 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_OBS_1963 = 75;
+        let score1963 = 0;
+        let isPlaying1963 = false;
+        let loop1963;
+        let spawnTimer1963 = 0;
+        let obstacles1963 = [];
+        let playerX1963 = window.innerWidth / 2;
+        let keys1963 = { left: false, right: false };
+        
+        const overlay1963 = document.getElementById('game-overlay-1963');
+        const area1963 = document.getElementById('game-area-1963');
+        const player1963 = document.getElementById('player-1963');
+        const scoreUI1963 = document.getElementById('score-1963');
+        const winModal1963 = document.getElementById('win-modal-1963');
+
+        // Input listeners for player 1963
+        area1963.addEventListener('mousemove', (e) => {
+            if (isPlaying1963) playerX1963 = e.clientX;
+        });
+        area1963.addEventListener('touchmove', (e) => {
+            if (isPlaying1963) {
+                playerX1963 = e.touches[0].clientX;
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        document.addEventListener('keydown', (e) => {
+            if(!isPlaying1963) return;
+            if(e.key === 'ArrowLeft') keys1963.left = true;
+            if(e.key === 'ArrowRight') keys1963.right = true;
+        });
+        document.addEventListener('keyup', (e) => {
+            if(!isPlaying1963) return;
+            if(e.key === 'ArrowLeft') keys1963.left = false;
+            if(e.key === 'ArrowRight') keys1963.right = false;
+        });
+
+        function startMinigame1963() {
+            score1963 = 0;
+            playerX1963 = window.innerWidth / 2;
+            keys1963 = { left: false, right: false };
+            obstacles1963.forEach(o => o.elem.remove());
+            obstacles1963 = [];
+            spawnTimer1963 = 0;
+            overlay1963.classList.remove('flash-hit');
+            
+            scoreUI1963.innerText = `Obstakels ontweken: 0 / \${TOTAL_OBS_1963}`;
+            winModal1963.classList.remove('active');
+            
+            overlay1963.classList.add('active');
+            isPlaying1963 = true;
+            
+            cancelAnimationFrame(loop1963);
+            loop1963 = requestAnimationFrame(updateLoop1963);
+        }
+
+        function updateLoop1963() {
+            if(!isPlaying1963) return;
+            
+            if (keys1963.left) playerX1963 -= 7;
+            if (keys1963.right) playerX1963 += 7;
+            
+            if (playerX1963 < 20) playerX1963 = 20;
+            if (playerX1963 > window.innerWidth - 20) playerX1963 = window.innerWidth - 20;
+            
+            player1963.style.left = playerX1963 + 'px';
+            
+            spawnTimer1963++;
+            if (spawnTimer1963 > 30) { // Spawn rate
+                spawnTimer1963 = 0;
+                spawnObstacle1963();
+            }
+            
+            const hitY = window.innerHeight - 40; 
+            const playerRect = { left: playerX1963 - 20, right: playerX1963 + 20, top: hitY - 40, bottom: hitY };
+            
+            for (let i = obstacles1963.length - 1; i >= 0; i--) {
+                const obs = obstacles1963[i];
+                obs.y += obs.speed;
+                obs.elem.style.top = obs.y + 'px';
+                
+                const obsRect = { left: obs.x, right: obs.x + obs.size, top: obs.y, bottom: obs.y + obs.size };
+                
+                // Collision
+                if (!obs.passed && !obs.hit) {
+                    // Circle to rect rough collision
+                    if (playerRect.left < obsRect.right && playerRect.right > obsRect.left &&
+                        playerRect.top < obsRect.bottom && playerRect.bottom > obsRect.top) {
+                        
+                        obs.hit = true;
+                        
+                        overlay1963.classList.add('flash-hit');
+                        setTimeout(() => { if (isPlaying1963) overlay1963.classList.remove('flash-hit'); }, 150);
+                    }
+                }
+                
+                // Score
+                if (!obs.passed && obs.y > hitY + 20) {
+                    obs.passed = true;
+                    if (!obs.hit) {
+                        score1963++;
+                        scoreUI1963.innerText = `Obstakels ontweken: \${score1963} / \${TOTAL_OBS_1963}`;
+                        if (score1963 >= TOTAL_OBS_1963) {
+                            winMinigame1963();
+                        }
+                    }
+                }
+                
+                // Remove
+                if (obs.y > window.innerHeight + 100) {
+                    obs.elem.remove();
+                    obstacles1963.splice(i, 1);
+                }
+            }
+            
+            if (isPlaying1963) {
+                loop1963 = requestAnimationFrame(updateLoop1963);
+            }
+        }
+        
+        function spawnObstacle1963() {
+            if (score1963 >= TOTAL_OBS_1963) return;
+            
+            const isHole = Math.random() > 0.5;
+            const size = isHole ? (Math.random() * 40 + 40) : (Math.random() * 60 + 30); // 40-80 or 30-90
+            const x = Math.random() * (window.innerWidth - size);
+            const speed = 5 + Math.random() * 5;
+            
+            const elem = document.createElement('div');
+            elem.className = `obstacle-1963 \${isHole ? 'obs-hole' : 'obs-dune'}`;
+            elem.style.left = x + 'px';
+            elem.style.top = '-100px';
+            elem.style.width = size + 'px';
+            elem.style.height = (isHole ? size : size * 0.7) + 'px';
+            
+            area1963.appendChild(elem);
+            
+            obstacles1963.push({ elem, x, y: -100, size, speed, passed: false, hit: false });
+        }
+
+        function winMinigame1963() {
+            isPlaying1963 = false;
+            cancelAnimationFrame(loop1963);
+            
+            setTimeout(() => {
+                winModal1963.classList.add('active');
+                confetti({
+                    particleCount: 200,
+                    spread: 100,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#ffffff', '#e0f7fa', '#006064']
+                });
+            }, 300);
+        }
+
+        function finishMinigame1963() {
+            overlay1963.classList.remove('active');
+            setTimeout(() => completeGame(1963), 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1964 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_CHORDS_1964 = 75;
+        let score1964 = 0;
+        let isPlaying1964 = false;
+        let loop1964;
+        let spawnTimer1964 = 0;
+        let notes1964 = [];
+        
+        const overlay1964 = document.getElementById('game-overlay-1964');
+        const track1964 = document.getElementById('track-1964');
+        const hitzone1964 = document.getElementById('hitzone-1964');
+        const scoreUI1964 = document.getElementById('score-1964');
+        const winModal1964 = document.getElementById('win-modal-1964');
+
+        function handleSpacebar1964(e) {
+            if (isPlaying1964 && e.code === 'Space') {
+                e.preventDefault();
+                tryHit1964();
+            }
+        }
+
+        function startMinigame1964() {
+            score1964 = 0;
+            notes1964.forEach(n => n.elem.remove());
+            notes1964 = [];
+            spawnTimer1964 = 0;
+            
+            scoreUI1964.innerText = `Akkoorden geraakt: 0 / \${TOTAL_CHORDS_1964}`;
+            winModal1964.classList.remove('active');
+            
+            document.addEventListener('keydown', handleSpacebar1964);
+            
+            overlay1964.classList.add('active');
+            isPlaying1964 = true;
+            
+            cancelAnimationFrame(loop1964);
+            loop1964 = requestAnimationFrame(updateLoop1964);
+        }
+
+        function updateLoop1964() {
+            if (!isPlaying1964) return;
+            
+            spawnTimer1964++;
+            if (spawnTimer1964 > 35) {
+                spawnTimer1964 = 0;
+                spawnNote1964();
+            }
+            
+            for (let i = notes1964.length - 1; i >= 0; i--) {
+                let n = notes1964[i];
+                if (!n.hit) {
+                    n.y += n.speed;
+                    n.elem.style.top = n.y + 'px';
+                }
+                
+                if (n.y > window.innerHeight + 100) {
+                    n.elem.remove();
+                    notes1964.splice(i, 1);
+                }
+            }
+            
+            if (isPlaying1964) {
+                loop1964 = requestAnimationFrame(updateLoop1964);
+            }
+        }
+
+        function spawnNote1964() {
+            if (score1964 >= TOTAL_CHORDS_1964) return;
+            const elem = document.createElement('div');
+            elem.className = 'note-1964';
+            elem.innerText = '🎵';
+            elem.style.top = '-80px';
+            
+            // Randomize color a bit
+            const colors = ['#e74c3c', '#9b59b6', '#3498db', '#e67e22'];
+            elem.style.background = colors[Math.floor(Math.random() * colors.length)];
+            
+            track1964.appendChild(elem);
+            
+            notes1964.push({ elem, y: -80, speed: 6 + Math.random() * 4, hit: false });
+        }
+
+        function tryHit1964() {
+            if (!isPlaying1964) return;
+            
+            hitzone1964.classList.add('active');
+            setTimeout(() => hitzone1964.classList.remove('active'), 100);
+            
+            const hzRect = hitzone1964.getBoundingClientRect();
+            
+            for (let i = 0; i < notes1964.length; i++) {
+                let n = notes1964[i];
+                if (n.hit) continue;
+                
+                const nRect = n.elem.getBoundingClientRect();
+                
+                // Check if note visually overlaps the hit zone
+                if (nRect.bottom > hzRect.top + 10 && nRect.top < hzRect.bottom - 10) {
+                    n.hit = true;
+                    n.elem.classList.add('hit');
+                    score1964++;
+                    scoreUI1964.innerText = `Akkoorden geraakt: \${score1964} / \${TOTAL_CHORDS_1964}`;
+                    
+                    if (score1964 >= TOTAL_CHORDS_1964) {
+                        winMinigame1964();
+                    }
+                    break; // one hit per press
+                }
+            }
+        }
+
+        function winMinigame1964() {
+            isPlaying1964 = false;
+            cancelAnimationFrame(loop1964);
+            document.removeEventListener('keydown', handleSpacebar1964);
+            
+            setTimeout(() => {
+                winModal1964.classList.add('active');
+                confetti({
+                    particleCount: 200,
+                    spread: 120,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#f1c40f', '#e74c3c', '#3498db', '#9b59b6']
+                });
+            }, 300);
+        }
+
+        function finishMinigame1964() {
+            overlay1964.classList.remove('active');
+            setTimeout(() => completeGame(1964), 400);
+        }
+        // ==========================================
+
+        // ==========================================
+        // 1965 MINIGAME LOGIC
+        // ==========================================
+        const TOTAL_CHECKPOINTS_1965 = 75;
+        let score1965 = 0;
+        let isPlaying1965 = false;
+        let loop1965;
+        let checkpoints1965 = [];
+        
+        let playerX1965 = window.innerWidth / 2;
+        let playerY1965 = window.innerHeight / 2;
+        let keys1965 = { up: false, down: false, left: false, right: false };
+        let currentScaleX1965 = 1;
+        let currentScaleY1965 = 1;
+
+        const overlay1965 = document.getElementById('game-overlay-1965');
+        const area1965 = document.getElementById('game-area-1965');
+        const player1965 = document.getElementById('player-1965');
+        const scoreUI1965 = document.getElementById('score-1965');
+        const winModal1965 = document.getElementById('win-modal-1965');
+
+        function handleKeyDown1965(e) {
+            if(!isPlaying1965) return;
+            if(e.key === 'ArrowUp') { keys1965.up = true; e.preventDefault(); }
+            if(e.key === 'ArrowDown') { keys1965.down = true; e.preventDefault(); }
+            if(e.key === 'ArrowLeft') { keys1965.left = true; e.preventDefault(); }
+            if(e.key === 'ArrowRight') { keys1965.right = true; e.preventDefault(); }
+        }
+        function handleKeyUp1965(e) {
+            if(!isPlaying1965) return;
+            if(e.key === 'ArrowUp') keys1965.up = false;
+            if(e.key === 'ArrowDown') keys1965.down = false;
+            if(e.key === 'ArrowLeft') keys1965.left = false;
+            if(e.key === 'ArrowRight') keys1965.right = false;
+        }
+
+        // DPAD button handler
+        function setDir1965(dir, state) {
+            if(isPlaying1965) keys1965[dir] = state;
+        }
+
+        function startMinigame1965() {
+            score1965 = 0;
+            checkpoints1965.forEach(c => c.elem.remove());
+            checkpoints1965 = [];
+            
+            playerX1965 = window.innerWidth / 2;
+            playerY1965 = window.innerHeight / 2;
+            keys1965 = { up: false, down: false, left: false, right: false };
+            currentScaleX1965 = 1;
+            
+            scoreUI1965.innerText = `Checkpoints bereikt: 0 / \${TOTAL_CHECKPOINTS_1965}`;
+            winModal1965.classList.remove('active');
+            
+            document.addEventListener('keydown', handleKeyDown1965);
+            document.addEventListener('keyup', handleKeyUp1965);
+            
+            // Spawn initial 5 checkpoints
+            for(let i = 0; i < 5; i++) {
+                spawnCheckpoint1965();
+            }
+            
+            overlay1965.classList.add('active');
+            isPlaying1965 = true;
+            
+            cancelAnimationFrame(loop1965);
+            loop1965 = requestAnimationFrame(updateLoop1965);
+        }
+
+        function updateLoop1965() {
+            if (!isPlaying1965) return;
+            
+            const speed = 7; // Bicycle speed
+            
+            if(keys1965.up) playerY1965 -= speed;
+            if(keys1965.down) playerY1965 += speed;
+            if(keys1965.left) { playerX1965 -= speed; currentScaleX1965 = -1; }
+            if(keys1965.right) { playerX1965 += speed; currentScaleX1965 = 1; }
+            
+            // Boundaries
+            if(playerX1965 < 20) playerX1965 = 20;
+            if(playerX1965 > window.innerWidth - 20) playerX1965 = window.innerWidth - 20;
+            if(playerY1965 < 20) playerY1965 = 20;
+            if(playerY1965 > window.innerHeight - 20) playerY1965 = window.innerHeight - 20;
+            
+            player1965.style.left = (playerX1965 - 20) + 'px';
+            player1965.style.top = (playerY1965 - 20) + 'px';
+            player1965.style.transform = `scaleX(\${currentScaleX1965})`;
+            
+            // Collision detection with checkpoints
+            for(let i = checkpoints1965.length - 1; i >= 0; i--) {
+                let cp = checkpoints1965[i];
+                let dist = Math.hypot(playerX1965 - cp.x, playerY1965 - cp.y);
+                
+                if(dist < 30) {
+                    // Collected!
+                    cp.elem.remove();
+                    checkpoints1965.splice(i, 1);
+                    score1965++;
+                    scoreUI1965.innerText = `Checkpoints bereikt: \${score1965} / \${TOTAL_CHECKPOINTS_1965}`;
+                    
+                    if(score1965 >= TOTAL_CHECKPOINTS_1965) {
+                        winMinigame1965();
+                        return;
+                    } else if (score1965 + checkpoints1965.length < TOTAL_CHECKPOINTS_1965) {
+                        spawnCheckpoint1965();
+                    }
+                }
+            }
+            
+            if(isPlaying1965) {
+                loop1965 = requestAnimationFrame(updateLoop1965);
+            }
+        }
+
+        function spawnCheckpoint1965() {
+            // Keep points away from edges
+            const pad = 50;
+            const x = pad + Math.random() * (window.innerWidth - pad * 2);
+            const y = pad + Math.random() * (window.innerHeight - pad * 2);
+            
+            const elem = document.createElement('div');
+            elem.className = 'checkpoint-1965';
+            elem.style.left = (x - 12) + 'px';
+            elem.style.top = (y - 12) + 'px';
+            area1965.appendChild(elem);
+            
+            checkpoints1965.push({elem, x, y});
+        }
+
+        function winMinigame1965() {
+            isPlaying1965 = false;
+            cancelAnimationFrame(loop1965);
+            document.removeEventListener('keydown', handleKeyDown1965);
+            document.removeEventListener('keyup', handleKeyUp1965);
+            
+            setTimeout(() => {
+                winModal1965.classList.add('active');
+                confetti({
+                    particleCount: 150,
+                    spread: 90,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#ffffff', '#ecf0f1', '#e74c3c'] // Provo white and a touch of red
+                });
+            }, 300);
+        }
+
+        function finishMinigame1965() {
+            overlay1965.classList.remove('active');
+            setTimeout(() => completeGame(1965), 400);
+        }
+        // ==========================================
+
+        // Update Counter & Progress Bar
+        function updateDashboard(animateEvents = false) {
+            const completedCount = completedGames.length;
+            const percentage = (completedCount / TOTAL_YEARS) * 100;
+            
+            progressBar.style.width = `${percentage}%`;
+            
+            // Animate counter
+            let displayedAge = completedCount === 0 ? "-" : (completedCount - 1).toString();
+            let startVal = ageCounter.innerText;
+            if(startVal !== displayedAge) {
+                ageCounter.innerText = displayedAge; 
+                ageCounter.style.transform = 'scale(1.3)';
+                setTimeout(() => { ageCounter.style.transform = 'scale(1)'; }, 200);
+            }
+
+            // Trigger Final Celebration
+            if (completedCount === TOTAL_YEARS && animateEvents) {
+                setTimeout(() => {
+                    triggerGrandConfetti();
+                    modal.classList.add('active');
+                }, 800);
+            }
+        }
+
+        // Epic Confetti Explosion
+        function triggerGrandConfetti() {
+            var duration = 5 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 4000 };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                    colors: ['#FFD700', '#E63946', '#FFFFFF', '#0A192F']
+                }));
+                confetti(Object.assign({}, defaults, { particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                    colors: ['#FFD700', '#E63946', '#FFFFFF', '#0A192F']
+                }));
+            }, 250);
+        }
+
+        // Modal close
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        // Reset functionality
+        resetBtn.addEventListener('click', () => {
+            if(confirm('Weet je zeker dat je alle voortgang wilt resetten? Handig om het opnieuw te testen!')) {
+                completedGames = [];
+                localStorage.removeItem('jubilee_progress');
+                initGrid();
+                progressBar.style.width = '0%';
+                ageCounter.innerText = '-';
+            }
+        });
+
+        // Initialize App
+        createAmbientBalloons();
+        initGrid();
+    </script>
+</body>
+</html>

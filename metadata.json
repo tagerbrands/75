@@ -1,0 +1,6 @@
+{
+  "name": "75-Jarig Jubileum",
+  "description": "Een interactief, web-based dashboard met 76 mini-games ter ere van een 75-jarig jubileum, oplopend van 1951 tot 2026.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
