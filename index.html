@@ -2044,6 +2044,17 @@
             border-radius: 50%;
             transform: translateX(-50%);
             z-index: 10;
+            display: flex; align-items: center; justify-content: center; font-size: 2rem;
+        }
+        .target-1977::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            width: 4px;
+            height: 100vh;
+            border-left: 4px dashed rgba(231, 76, 60, 0.6);
+            transform: translateX(-50%);
         }
 
         .sonic-boom-1977 {
@@ -3892,6 +3903,7 @@
         .horse-2016 {
             position: absolute; bottom: 0; left: 15%; font-size: 5rem; user-select: none; z-index: 15;
             filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
+            transform: scaleX(-1);
         }
 
         .f1-car-2016 {
@@ -4401,7 +4413,11 @@
             transition: transform 0.2s, opacity 0.2s;
         }
         .candle-2026.extinguished {
-            opacity: 0.5; filter: grayscale(100%); transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0.5; filter: grayscale(100%); pointer-events: none;
+            animation: floatUp2026 2s ease-in forwards;
+        }
+        @keyframes floatUp2026 {
+            to { transform: translate(-50%, -100vh) scale(1.5); opacity: 0; }
         }
 
         @keyframes pulse-gold { 
@@ -4443,8 +4459,11 @@
         <div class="game-content-1951" id="game-content-1951">
             <h2 class="retro-title">Studio Irene</h2>
             <div class="cable-counter-text">Kabels verbonden: <span id="cable-count-1951">0</span> / 75</div>
-            <div class="cable-grid" id="cable-grid-1951">
-                <!-- Plugs generated via JS -->
+            
+            <div class="switchboard-1951" id="switchboard-1951" style="display: flex; justify-content: space-between; width: 90%; max-width: 400px; height: 50vh; margin: 0 auto; position: relative; background: #333; border: 10px solid #111; border-radius: 10px; padding: 20px;">
+                <svg class="switchboard-svg" id="switchboard-svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;"></svg>
+                <div class="port-column" id="left-ports-1951" style="display: flex; flex-direction: column; justify-content: space-around; z-index: 10;"></div>
+                <div class="port-column" id="right-ports-1951" style="display: flex; flex-direction: column; justify-content: space-around; z-index: 10;"></div>
             </div>
         </div>
         
@@ -4717,11 +4736,17 @@
             <div class="game-year-display" style="color: #fff; text-shadow: 2px 2px 0px #01579b, -1px -1px 0 #01579b, 1px -1px 0 #01579b, -1px 1px 0 #01579b, 1px 1px 0 #01579b;">1962</div>
         </div>
         
-        <div class="score-1962" id="score-1962">Kaartstukken geplaatst: 0 / 75</div>
-        <div class="map-grid-1962" id="map-grid-1962"></div>
+        <div class="score-1962" id="score-1962" style="margin-top: 65px; margin-bottom: 20px;">Afstand geduwd: 0 / 75</div>
+        <div style="color: white; font-weight: bold; text-align: center; margin-bottom: 20px;">Sleep/duw het eiland naar rechts (Internationale Wateren)</div>
+        
+        <div class="sea-1962" id="sea-1962" style="position: relative; width: 90%; max-width: 600px; height: 50vh; background: #0277bd; border: 4px solid #fff; border-radius: 10px; overflow: hidden; margin: 0 auto; touch-action: none;">
+            <div class="mainland-1962" style="position: absolute; top: 0; left: 0; width: 20%; height: 100%; background: #27ae60; border-right: 4px dashed rgba(255,255,255,0.5);"></div>
+            <div class="international-waters-1962" style="position: absolute; top: 0; right: 0; width: 20%; height: 100%; background: #2980b9; border-left: 4px dashed rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7); font-weight: bold; text-align: center;">Int. Wateren</div>
+            <div class="island-1962" id="island-1962" style="position: absolute; top: 50%; left: 22%; transform: translateY(-50%); width: 80px; height: 60px; background: #2ecc71; border-radius: 40% 60% 50% 30%; border: 3px solid #27ae60; cursor: pointer; touch-action: none; box-shadow: 5px 5px 15px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: #111; font-weight: bold; font-size: 10px;">Nieuw<br>Guinea</div>
+        </div>
         
         <div class="retro-modal" id="win-modal-1962">
-            <h2>Kaart compleet</h2>
+            <h2>Eiland overgedragen</h2>
             <div class="quote">
                 Nederland verliest onder internationale druk zijn laatste grote kolonie in de Oost.
             </div>
@@ -4938,10 +4963,13 @@
         </div>
         
         <div class="score-1969" id="score-1969">Brandstof over: 100 / 100</div>
+        <div style="position: absolute; top: 120px; color: white; width: 100%; text-align: center; z-index: 30; font-family: monospace;">Stuur (Pijltjes/Slepen) en Rem (Spatie/Knop) zachtjes op het platform!</div>
         
-        <div class="moon-surface-1969" id="moon-surface-1969"></div>
+        <div class="moon-surface-1969" id="moon-surface-1969">
+            <div id="landing-pad-1969" style="position: absolute; bottom: 80%; left: 40%; width: 20%; height: 10px; background: #f1c40f; border-radius: 5px; box-shadow: 0 0 10px #f1c40f;"></div>
+        </div>
         
-        <div class="lander-1969" id="lander-1969">
+        <div class="lander-1969" id="lander-1969" style="transform: translate(-50%, 0);">
             <div class="ship">🚀</div>
             <div class="flame">🔥</div>
         </div>
@@ -4949,7 +4977,7 @@
         <div class="explosion-1969" id="explosion-1969">💥</div>
         
         <div class="thrust-controls-1969" id="thrust-controls-1969">
-            <button class="thrust-btn-1969" id="thrust-btn-1969">STUWRAKETTEN</button>
+            <button class="thrust-btn-1969" id="thrust-btn-1969">REMMEN</button>
         </div>
         
         <div class="retro-modal" id="win-modal-1969">
@@ -4970,13 +4998,22 @@
         
         <div class="score-1972" id="score-1972">Tijd in balans: 0 / 75 seconden</div>
         
-        <div class="balance-container-1972">
+        <div id="sky-1972" style="position: absolute; top: 120px; left: 0; width: 100%; height: 35vh; overflow: hidden; pointer-events: none;">
+            <!-- Falling items will be spawned here -->
+        </div>
+        
+        <div class="balance-container-1972" style="position: absolute; bottom: 30vh; left: 50%; transform: translateX(-50%); width: 90vw; max-width: 600px; display: flex; align-items: center; gap: 15px;">
             <div class="balance-icon-1972">🌳</div>
             <div class="slider-track-1972" id="slider-track-1972">
                 <div class="green-zone-1972" id="green-zone-1972"></div>
-                <div class="indicator-1972" id="indicator-1972">↕</div>
+                <div class="indicator-1972" id="indicator-1972">⚖️</div>
             </div>
             <div class="balance-icon-1972">🏭</div>
+        </div>
+        
+        <div style="position: absolute; bottom: 15vh; left: 50%; transform: translateX(-50%); display: flex; gap: 40px; z-index: 40;">
+            <button class="retro-btn" onclick="addTree1972()" style="background: #4CAF50; color: white; padding: 15px 30px; font-size: 1.2rem;">+ 🌳</button>
+            <button class="retro-btn" onclick="addFactory1972()" style="background: #757575; color: white; padding: 15px 30px; font-size: 1.2rem;">+ 🏭</button>
         </div>
         
         <div class="retro-modal" id="win-modal-1972">
@@ -5043,21 +5080,16 @@
             <div class="game-year-display" style="color: #fff; text-shadow: 2px 2px 0px #000;">1975</div>
         </div>
         
-        <div class="score-1975" id="score-1975">Wissels veiliggesteld: 0 / 75</div>
+        <div class="score-1975" id="score-1975">Treinen veilig gepasseerd: 0 / 75</div>
         
         <div class="track-network-1975" id="track-network-1975">
-            <div class="track-line-1975 track-v-1"></div>
-            <div class="track-line-1975 track-v-2"></div>
-            <div class="track-line-1975 track-h-1"></div>
-            <div class="track-line-1975 track-h-2"></div>
+            <div class="track-line-1975 track-v-1" style="left: 145px;"></div>
+            <div class="track-line-1975 track-h-1" style="top: 195px;"></div>
             
             <!-- We'll inject trains here -->
             
-            <!-- Switches at intersections -->
-            <div class="switch-1975 safe" id="sw-1975-0" style="left: 85px; top: 125px;" onmousedown="clickSwitch1975(0)" ontouchstart="clickSwitch1975(0)">↕</div>
-            <div class="switch-1975 safe" id="sw-1975-1" style="left: 215px; top: 125px;" onmousedown="clickSwitch1975(1)" ontouchstart="clickSwitch1975(1)">↔</div>
-            <div class="switch-1975 safe" id="sw-1975-2" style="left: 85px; top: 275px;" onmousedown="clickSwitch1975(2)" ontouchstart="clickSwitch1975(2)">↔</div>
-            <div class="switch-1975 safe" id="sw-1975-3" style="left: 215px; top: 275px;" onmousedown="clickSwitch1975(3)" ontouchstart="clickSwitch1975(3)">↕</div>
+            <!-- Single Switch at intersection -->
+            <div class="switch-1975 safe" id="sw-1975-0" style="left: 150px; top: 200px; width: 80px; height: 80px; font-size: 2.5rem;" onmousedown="clickSwitch1975(event)" ontouchstart="clickSwitch1975(event)">↕</div>
         </div>
         
         <div class="retro-modal" id="win-modal-1975" style="z-index: 50;">
@@ -5100,8 +5132,12 @@
         
         <div class="score-1977" id="score-1977">Doelen geraakt: 0 / 75</div>
         
+        <div style="position: absolute; top: 110px; left: 50%; transform: translateX(-50%); color: #fff; font-weight: bold; z-index: 35; text-align: center; text-shadow: 1px 1px 2px black; font-size: 1.1rem; width: 90%;">
+            Druk op spatie (of tik) exact op het moment dat het vliegtuig<br>over het doelwit (☁️) vliegt!
+        </div>
+        
         <div class="sky-area-1977" id="sky-area-1977">
-            <div class="target-1977" id="target-1977"></div>
+            <div class="target-1977" id="target-1977">☁️</div>
             <div class="plane-1977" id="plane-1977">✈️</div>
         </div>
         
@@ -5287,10 +5323,15 @@
             <div class="cd-hole-1984"></div>
             <div id="data-points-container-1984"></div>
             <svg class="laser-svg-1984" id="laser-svg-1984"></svg>
-            <div class="baby-1984" id="baby-1984">👶</div>
+            <div class="baby-1984" id="baby-1984">👶
+                <div style="position: absolute; top: -35px; left: -25px; font-size: 1.5rem; background: white; border-radius: 50%; padding: 2px 8px; color: black; box-shadow: 0 0 5px rgba(0,0,0,0.5);">🎶</div>
+            </div>
         </div>
         
-        <div style="margin-top: 30px; font-weight: bold; color: #fff;">Leid de laser via de datapunten naar de baby!</div>
+        <div style="margin-top: 30px; font-weight: bold; color: #fff; text-align: center; z-index: 30; position: relative;">
+            Leid de laser via de datapunten naar de baby!<br>
+            <span style="font-size: 0.9em; font-weight: normal;">(De baby wil heel graag muziek luisteren)</span>
+        </div>
         
         <div class="retro-modal" id="win-modal-1984" style="z-index: 50;">
             <h2>Kraamvisite met muziek!</h2>
@@ -5970,14 +6011,22 @@
             <div class="game-year-display" style="color: #f1c40f; text-shadow: 2px 2px 0px #000;">2013</div>
         </div>
         
-        <div class="score-2013" id="score-2013">Seconden in balans: 0 / 75</div>
+        <div class="score-2013" id="score-2013">Verwissel de koninginnen (links) en koningen (rechts)</div>
         
-        <div class="crown-container-2013" id="crown-container-2013">
-            <div class="crown-2013" id="crown-2013">👑</div>
+        <div style="display: flex; gap: 10px; margin-top: 50px;" id="puzzle-board-2013">
+            <!-- Tiles injected by JS -->
+        </div>
+        
+        <div style="margin-top: 30px; font-size: 1.2rem; color: #fff; max-width: 400px; text-align: center;">
+            Klik op een figuur om deze te verplaatsen naar een leeg vakje direct ernaast, of spring over maximaal 1 ander figuur.
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <button class="retro-btn" onclick="startMinigame2013()" style="background: #e67e22; color: #fff;">Opnieuw Beginnen</button>
         </div>
         
         <div class="retro-modal" id="win-modal-2013" style="z-index: 50; border: 3px solid #f1c40f;">
-            <h2 style="color: #c0392b;">Leve de Koning!</h2>
+            <h2 style="color: #c0392b;">De Troonwisseling is voltooid!</h2>
             <div class="quote" style="color: #333;">
                 Koningin Beatrix abdiceert en Willem-Alexander wordt ingehuldigd als eerste Nederlandse koning in meer dan 120 jaar.
             </div>
@@ -5995,7 +6044,12 @@
         <div class="score-2014" id="score-2014">Afstand overbrugd: 0 / 75</div>
         
         <div class="sky-container-2014" id="sky-container-2014">
-            <div class="stork-2014" id="stork-2014">🦩</div>
+            <div class="stork-2014" id="stork-2014" style="left: auto; right: 20%; transform: translateY(-50%);">
+                <div style="position: relative; display: inline-block;">
+                    <span style="display: inline-block; transform: scaleX(-1); font-size: 4rem;">🦩</span>
+                    <span style="position: absolute; right: -15px; top: 30px; font-size: 1.5rem; transform: rotate(15deg);">👶</span>
+                </div>
+            </div>
             <!-- rockets injected -->
         </div>
         
@@ -7116,10 +7170,13 @@
         
         const overlay1951 = document.getElementById('game-overlay-1951');
         const gameContent1951 = document.getElementById('game-content-1951');
-        const cableGrid1951 = document.getElementById('cable-grid-1951');
         const cableCounter1951 = document.getElementById('cable-count-1951');
         const testPatternBg = document.getElementById('bg-test-pattern');
         const winModal1951 = document.getElementById('win-modal-1951');
+
+        let activeCable1951 = null;
+        let activeLine1951 = null;
+        let svg1951, leftPorts1951, rightPorts1951;
 
         function startMinigame1951() {
             // Reset state
@@ -7131,29 +7188,152 @@
             gameContent1951.style.opacity = '1';
             gameContent1951.style.pointerEvents = 'all';
             
-            cableGrid1951.innerHTML = ''; // Clear previous
+            svg1951 = document.getElementById('switchboard-svg');
+            leftPorts1951 = document.getElementById('left-ports-1951');
+            rightPorts1951 = document.getElementById('right-ports-1951');
             
-            // Generate 75 plugs
-            for(let i=0; i<TOTAL_CABLES_1951; i++) {
-                const plug = document.createElement('div');
-                plug.className = 'plug';
-                plug.onclick = function() {
-                    if(!this.classList.contains('connected')) {
-                        this.classList.add('connected');
-                        connectedCables1951++;
-                        cableCounter1951.innerText = connectedCables1951;
-                        
-                        // Check Win Condition
-                        if(connectedCables1951 === TOTAL_CABLES_1951) {
-                            winMinigame1951();
-                        }
-                    }
-                };
-                cableGrid1951.appendChild(plug);
-            }
+            setupBoard1951();
             
             // Show Overlay
             overlay1951.classList.add('active');
+            
+            // Global mouse/touch events for dragging
+            document.removeEventListener('mousemove', dragCable1951);
+            document.removeEventListener('mouseup', dropCable1951);
+            document.removeEventListener('touchmove', dragCable1951);
+            document.removeEventListener('touchend', dropCable1951);
+            
+            document.addEventListener('mousemove', dragCable1951);
+            document.addEventListener('mouseup', dropCable1951);
+            document.addEventListener('touchmove', dragCable1951, {passive: false});
+            document.addEventListener('touchend', dropCable1951);
+        }
+
+        function setupBoard1951() {
+            leftPorts1951.innerHTML = '';
+            rightPorts1951.innerHTML = '';
+            svg1951.innerHTML = '';
+            
+            for(let i=0; i<5; i++) {
+                // Left Port
+                const lp = document.createElement('div');
+                lp.className = 'plug-port left-port';
+                lp.style.cssText = 'width: 40px; height: 40px; background: #222; border-radius: 50%; border: 3px solid #555; position: relative;';
+                
+                const plug = document.createElement('div');
+                plug.className = 'plug-head';
+                plug.style.cssText = 'width: 30px; height: 30px; background: #e74c3c; border-radius: 50%; position: absolute; top: 2px; left: 2px; cursor: pointer; touch-action: none; z-index: 20;';
+                
+                plug.onmousedown = (e) => startDrag1951(e, plug, lp);
+                plug.ontouchstart = (e) => startDrag1951(e, plug, lp);
+                
+                lp.appendChild(plug);
+                leftPorts1951.appendChild(lp);
+                
+                // Right Port
+                const rp = document.createElement('div');
+                rp.className = 'plug-port right-port';
+                rp.style.cssText = 'width: 40px; height: 40px; background: #222; border-radius: 50%; border: 3px solid #555; position: relative;';
+                rp.dataset.index = i;
+                rightPorts1951.appendChild(rp);
+            }
+        }
+        
+        function getCenterOfElemRelative(elem, parent) {
+            const rect = elem.getBoundingClientRect();
+            const parentRect = parent.getBoundingClientRect();
+            return {
+                x: rect.left - parentRect.left + rect.width / 2,
+                y: rect.top - parentRect.top + rect.height / 2
+            };
+        }
+
+        function startDrag1951(e, plug, port) {
+            if (plug.classList.contains('connected')) return;
+            if (e.cancelable && e.type === 'touchstart') e.preventDefault();
+            
+            activeCable1951 = plug;
+            
+            // Create line
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            const center = getCenterOfElemRelative(port, svg1951);
+            
+            line.setAttribute('x1', center.x);
+            line.setAttribute('y1', center.y);
+            line.setAttribute('x2', center.x);
+            line.setAttribute('y2', center.y);
+            line.setAttribute('stroke', '#e74c3c');
+            line.setAttribute('stroke-width', '6');
+            line.setAttribute('stroke-linecap', 'round');
+            
+            svg1951.appendChild(line);
+            activeLine1951 = line;
+        }
+
+        function dragCable1951(e) {
+            if (!activeCable1951 || !activeLine1951) return;
+            if (e.cancelable && e.type === 'touchmove') e.preventDefault();
+            
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            const boardRect = svg1951.getBoundingClientRect();
+            let x = clientX - boardRect.left;
+            let y = clientY - boardRect.top;
+            
+            activeLine1951.setAttribute('x2', x);
+            activeLine1951.setAttribute('y2', y);
+            
+            activeCable1951.style.position = 'fixed';
+            activeCable1951.style.left = (clientX - 15) + 'px';
+            activeCable1951.style.top = (clientY - 15) + 'px';
+        }
+
+        function dropCable1951(e) {
+            if (!activeCable1951) return;
+            
+            let clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+            let clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+            
+            // Check drop target
+            const target = document.elementFromPoint(clientX, clientY);
+            if (target && target.classList.contains('right-port') && !target.hasChildNodes()) {
+                // Connect
+                activeCable1951.style.position = 'absolute';
+                activeCable1951.style.left = '2px';
+                activeCable1951.style.top = '2px';
+                activeCable1951.classList.add('connected');
+                activeCable1951.style.background = '#2ecc71';
+                
+                target.appendChild(activeCable1951);
+                activeLine1951.setAttribute('stroke', '#2ecc71');
+                
+                // Snap line to right port
+                const center = getCenterOfElemRelative(target, svg1951);
+                activeLine1951.setAttribute('x2', center.x);
+                activeLine1951.setAttribute('y2', center.y);
+                
+                // Score update
+                connectedCables1951 += 15; // 5 cables = 75 total
+                cableCounter1951.innerText = connectedCables1951;
+                
+                if (connectedCables1951 >= TOTAL_CABLES_1951) {
+                    winMinigame1951();
+                } else if (leftPorts1951.childElementCount > 0 && Array.from(leftPorts1951.children).every(p => !p.hasChildNodes())) {
+                    // Board clear but not 75 yet, setup again
+                    setTimeout(setupBoard1951, 500);
+                }
+                
+            } else {
+                // Snap back
+                activeCable1951.style.position = 'absolute';
+                activeCable1951.style.left = '2px';
+                activeCable1951.style.top = '2px';
+                activeLine1951.remove();
+            }
+            
+            activeCable1951 = null;
+            activeLine1951 = null;
         }
 
         function winMinigame1951() {
@@ -7570,22 +7750,29 @@
             btnElem.classList.add('active');
         }
 
+        const COLOR_MAP_1955 = {
+            1: '#E1261C', // Red
+            2: '#F3CA00', // Yellow
+            3: '#0057A4', // Blue
+            4: '#00893A'  // Green
+        };
+
         function startMinigame1955() {
             coloredCells1955 = 0;
             scoreUI1955.innerText = `Vlakjes ingekleurd: 0 / ${TOTAL_CELLS_1955}`;
             winModal1955.classList.remove('active');
             
             const miffyMap = [
-                0, 1, 1, 1, 0, 1, 1, 1, 0,
-                0, 1, 1, 1, 0, 1, 1, 1, 0,
-                1, 1, 1, 1, 0, 1, 1, 1, 1,
-                1, 1, 1, 1, 0, 1, 1, 1, 1,
-                1, 1, 0, 1, 1, 1, 0, 1, 1,
-                1, 1, 1, 1, 1, 1, 1, 1, 1,
-                1, 1, 1, 0, 1, 0, 1, 1, 1,
-                1, 1, 1, 1, 0, 1, 1, 1, 1,
-                1, 1, 1, 0, 1, 0, 1, 1, 1,
-                1, 1, 1, 1, 1, 1, 1, 1, 1
+                0, 1, 1, 1, 0, 2, 2, 2, 0,
+                0, 1, 1, 1, 0, 2, 2, 2, 0,
+                1, 1, 1, 1, 0, 2, 2, 2, 2,
+                1, 1, 1, 1, 0, 2, 2, 2, 2,
+                3, 3, 0, 3, 3, 3, 0, 4, 4,
+                3, 3, 3, 3, 3, 3, 4, 4, 4,
+                3, 3, 3, 0, 1, 0, 4, 4, 4,
+                3, 3, 3, 3, 0, 4, 4, 4, 4,
+                1, 1, 2, 0, 1, 0, 3, 4, 4,
+                1, 1, 2, 2, 1, 3, 3, 4, 4
             ];
 
             // Generate grid
@@ -7596,8 +7783,13 @@
                 if (miffyMap[i] === 0) {
                     cell.classList.add('black-cell');
                 } else {
+                    const targetColor = COLOR_MAP_1955[miffyMap[i]];
                     cell.dataset.colored = "false";
-                    cell.onclick = () => colorCell1955(cell);
+                    cell.dataset.targetColor = targetColor;
+                    cell.style.borderColor = targetColor;
+                    cell.style.borderWidth = '2px';
+                    cell.style.borderStyle = 'solid';
+                    cell.onclick = () => colorCell1955(cell, targetColor);
                 }
                 grid1955.appendChild(cell);
             }
@@ -7605,9 +7797,18 @@
             overlay1955.classList.add('active');
         }
 
-        function colorCell1955(cell) {
+        function colorCell1955(cell, targetColor) {
+            if (activeColor1955 !== targetColor) {
+                // Shake if wrong color
+                cell.style.transform = "translateX(-3px)";
+                setTimeout(() => cell.style.transform = "translateX(3px)", 50);
+                setTimeout(() => cell.style.transform = "translateX(0)", 100);
+                return;
+            }
+
             if (cell.dataset.colored === "false") {
                 cell.style.background = activeColor1955;
+                cell.style.borderColor = '#111';
                 cell.dataset.colored = "true";
                 coloredCells1955++;
                 scoreUI1955.innerText = `Vlakjes ingekleurd: ${coloredCells1955} / ${TOTAL_CELLS_1955}`;
@@ -8273,9 +8474,10 @@
             const playerRect = { left: playerX1961 - 15, right: playerX1961 + 15, top: hitY - 30, bottom: hitY };
             
             // Move walls
+            const globalSpeed = 5 + (score1961 / 15);
             for (let i = walls1961.length - 1; i >= 0; i--) {
                 const wall = walls1961[i];
-                wall.y += wall.speed;
+                wall.y += globalSpeed;
                 wall.elem.style.top = wall.y + 'px';
                 
                 const wallRect = { left: wall.x, right: wall.x + wall.width, top: wall.y, bottom: wall.y + 30 };
@@ -8327,7 +8529,7 @@
             
             if(leftWidth < 0) leftWidth = 0;
             
-            const speed = 4 + Math.random() * 3; // Speed between 4 and 7
+            const speed = 5 + (score1961 / 15); // Consistent speed that scales with score so walls never overtake
             
             // Left Wall
             const lwElem = document.createElement('div');
@@ -8379,82 +8581,94 @@
         // ==========================================
         // 1962 MINIGAME LOGIC
         // ==========================================
-        const TOTAL_MAP_PIECES_1962 = 75;
-        let piecesPlaced1962 = 0;
+        const TOTAL_DISTANCE_1962 = 75;
+        let distancePushed1962 = 0;
         let isPlaying1962 = false;
-        let isDragging1962 = false;
         
         const overlay1962 = document.getElementById('game-overlay-1962');
-        const mapGrid1962 = document.getElementById('map-grid-1962');
         const scoreUI1962 = document.getElementById('score-1962');
         const winModal1962 = document.getElementById('win-modal-1962');
+        const island1962 = document.getElementById('island-1962');
+        const sea1962 = document.getElementById('sea-1962');
+        
+        let islandStartX = 0;
+        let initialMouseX1962 = 0;
+        let isDraggingIsland1962 = false;
 
         function startMinigame1962() {
-            piecesPlaced1962 = 0;
+            distancePushed1962 = 0;
             isPlaying1962 = true;
-            isDragging1962 = false;
+            isDraggingIsland1962 = false;
             
-            scoreUI1962.innerText = `Kaartstukken geplaatst: 0 / ${TOTAL_MAP_PIECES_1962}`;
+            scoreUI1962.innerText = `Afstand geduwd: 0 / ${TOTAL_DISTANCE_1962}`;
             winModal1962.classList.remove('active');
             
-            // Generate grid
-            mapGrid1962.innerHTML = '';
-            for(let i = 0; i < TOTAL_MAP_PIECES_1962; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'map-cell-1962';
-                
-                // Mouse events for drag-to-paint
-                cell.addEventListener('mousedown', (e) => {
-                    isDragging1962 = true;
-                    revealMapPiece1962(cell);
-                    e.preventDefault();
-                });
-                cell.addEventListener('mouseenter', () => {
-                    if(isDragging1962) revealMapPiece1962(cell);
-                });
-                
-                mapGrid1962.appendChild(cell);
-            }
+            // Reset island position
+            island1962.style.left = '22%';
             
-            // Global mouse up to stop dragging
-            window.addEventListener('mouseup', stopDragging1962);
+            island1962.removeEventListener('mousedown', dragStart1962);
+            island1962.removeEventListener('touchstart', dragStart1962);
+            document.removeEventListener('mousemove', dragMove1962);
+            document.removeEventListener('touchmove', dragMove1962);
+            document.removeEventListener('mouseup', dragEnd1962);
+            document.removeEventListener('touchend', dragEnd1962);
             
-            // Touch events for mobile swipe
-            mapGrid1962.addEventListener('touchmove', handleTouchMove1962, {passive: false});
+            island1962.addEventListener('mousedown', dragStart1962);
+            island1962.addEventListener('touchstart', dragStart1962, {passive: false});
+            document.addEventListener('mousemove', dragMove1962);
+            document.addEventListener('touchmove', dragMove1962, {passive: false});
+            document.addEventListener('mouseup', dragEnd1962);
+            document.addEventListener('touchend', dragEnd1962);
             
             overlay1962.classList.add('active');
         }
 
-        function stopDragging1962() {
-            isDragging1962 = false;
+        function dragStart1962(e) {
+            if (!isPlaying1962) return;
+            isDraggingIsland1962 = true;
+            if (e.cancelable && e.type === 'touchstart') e.preventDefault();
+            
+            initialMouseX1962 = e.touches ? e.touches[0].clientX : e.clientX;
+            const currentLeft = window.getComputedStyle(island1962).left;
+            islandStartX = parseFloat(currentLeft);
         }
 
-        function handleTouchMove1962(e) {
-            if(!isPlaying1962) return;
-            e.preventDefault(); // Prevent scrolling while drawing the map
-            const touch = e.touches[0];
-            const elem = document.elementFromPoint(touch.clientX, touch.clientY);
-            if(elem && elem.classList.contains('map-cell-1962')) {
-                revealMapPiece1962(elem);
+        function dragMove1962(e) {
+            if (!isDraggingIsland1962 || !isPlaying1962) return;
+            if (e.cancelable && e.type === 'touchmove') e.preventDefault();
+            
+            const currentMouseX = e.touches ? e.touches[0].clientX : e.clientX;
+            const deltaX = currentMouseX - initialMouseX1962;
+            
+            // Allow pushing right
+            if (deltaX > 0) {
+                let newLeft = islandStartX + deltaX;
+                island1962.style.left = newLeft + 'px';
+                
+                // Calculate progress
+                const seaWidth = sea1962.getBoundingClientRect().width;
+                const startLeft = seaWidth * 0.22; // 22%
+                const endLeft = seaWidth * 0.70; // rough end goal
+                
+                const progress = Math.max(0, Math.min(1, (newLeft - startLeft) / (endLeft - startLeft)));
+                distancePushed1962 = Math.floor(progress * TOTAL_DISTANCE_1962);
+                
+                scoreUI1962.innerText = `Afstand geduwd: ${distancePushed1962} / ${TOTAL_DISTANCE_1962}`;
+                
+                if (distancePushed1962 >= TOTAL_DISTANCE_1962) {
+                    isDraggingIsland1962 = false;
+                    island1962.style.left = '75%';
+                    winMinigame1962();
+                }
             }
         }
 
-        function revealMapPiece1962(cell) {
-            if(!isPlaying1962 || cell.classList.contains('revealed')) return;
-            
-            cell.classList.add('revealed');
-            piecesPlaced1962++;
-            scoreUI1962.innerText = `Kaartstukken geplaatst: ${piecesPlaced1962} / ${TOTAL_MAP_PIECES_1962}`;
-            
-            if(piecesPlaced1962 >= TOTAL_MAP_PIECES_1962) {
-                winMinigame1962();
-            }
+        function dragEnd1962() {
+            isDraggingIsland1962 = false;
         }
 
         function winMinigame1962() {
             isPlaying1962 = false;
-            window.removeEventListener('mouseup', stopDragging1962);
-            mapGrid1962.removeEventListener('touchmove', handleTouchMove1962);
             
             setTimeout(() => {
                 winModal1962.classList.add('active');
@@ -8463,7 +8677,7 @@
                     spread: 80,
                     origin: { y: 0.6 },
                     zIndex: 2500,
-                    colors: ['#689f38', '#8bc34a', '#4caf50']
+                    colors: ['#0277bd', '#2ecc71', '#fff']
                 });
             }, 300);
         }
@@ -8724,6 +8938,40 @@
             notes1964.push({ elem, y: -80, speed: 6 + Math.random() * 4, hit: false });
         }
 
+        const obladiFrequencies = [
+            392, 392, 392, // ob la di (G4)
+            392, 392, 392, // ob la da (G4)
+            329.6, 392, 440, 392, // life goes on bra (E4 G4 A4 G4)
+            392, 329.6, 392, 261.6 // la la how the life goes on (G4 E4 G4 C4)
+        ];
+        let audioCtx1964 = null;
+
+        function playPing1964() {
+            if (!audioCtx1964) {
+                audioCtx1964 = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx1964.state === 'suspended') audioCtx1964.resume();
+            
+            // Re-use score1964 as index for melody
+            const noteIndex = score1964 - 1; 
+            const freq = obladiFrequencies[noteIndex % obladiFrequencies.length];
+            
+            const osc = audioCtx1964.createOscillator();
+            const gainNode = audioCtx1964.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, audioCtx1964.currentTime);
+            
+            gainNode.gain.setValueAtTime(0.5, audioCtx1964.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx1964.currentTime + 0.3);
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx1964.destination);
+            
+            osc.start();
+            osc.stop(audioCtx1964.currentTime + 0.3);
+        }
+
         function tryHit1964() {
             if (!isPlaying1964) return;
             
@@ -8744,6 +8992,8 @@
                     n.elem.classList.add('hit');
                     score1964++;
                     scoreUI1964.innerText = `Akkoorden geraakt: ${score1964} / ${TOTAL_CHORDS_1964}`;
+                    
+                    playPing1964();
                     
                     if (score1964 >= TOTAL_CHORDS_1964) {
                         winMinigame1964();
@@ -9481,26 +9731,34 @@
         let fuel1969 = 100;
         let velocity1969 = 0;
         let altitude1969 = 20; // Starts at 20% down
+        let posX1969 = 50; // starts in middle
         let isPlaying1969 = false;
         let thrusterActive1969 = false;
         let loop1969;
         
+        let keys1969 = { left: false, right: false };
+        let touchX1969 = null;
+        
         const GRAVITY_1969 = 0.04;
         const THRUST_1969 = 0.1;
         const FUEL_COST_1969 = 0.5; // Cost per frame while thrusting
-        const SAFE_SPEED_1969 = 0.5;
+        const SAFE_SPEED_1969 = 0.8;
         const MAX_ALTITUDE_1969 = 85; // % down to touch moon
         
         function startMinigame1969() {
             fuel1969 = 100;
             velocity1969 = 0;
             altitude1969 = 20;
+            posX1969 = 50;
             isPlaying1969 = true;
             thrusterActive1969 = false;
+            keys1969 = { left: false, right: false };
+            touchX1969 = null;
             
             const lander = document.getElementById('lander-1969');
             lander.classList.remove('crashed');
             lander.style.top = altitude1969 + '%';
+            lander.style.left = posX1969 + '%';
             
             document.getElementById('explosion-1969').classList.remove('active');
             document.getElementById('win-modal-1969').classList.remove('active');
@@ -9537,6 +9795,8 @@
                 e.preventDefault();
                 thrusterActive1969 = true;
             }
+            if (e.code === 'ArrowLeft') keys1969.left = true;
+            if (e.code === 'ArrowRight') keys1969.right = true;
         };
         const keyHandlerUp1969 = (e) => {
             if(!isPlaying1969) return;
@@ -9544,14 +9804,45 @@
                 e.preventDefault();
                 thrusterActive1969 = false;
             }
+            if (e.code === 'ArrowLeft') keys1969.left = false;
+            if (e.code === 'ArrowRight') keys1969.right = false;
         };
         document.addEventListener('keydown', keyHandlerDown1969);
         document.addEventListener('keyup', keyHandlerUp1969);
+        
+        // Touch steering
+        const overlay1969 = document.getElementById('game-overlay-1969');
+        overlay1969.addEventListener('touchstart', (e) => {
+            if(!isPlaying1969) return;
+            // only steer if touching top 80% (avoid thrust button)
+            if (e.touches[0].clientY < window.innerHeight * 0.8) {
+                touchX1969 = e.touches[0].clientX;
+            }
+        }, {passive: true});
+        overlay1969.addEventListener('touchmove', (e) => {
+            if(!isPlaying1969) return;
+            if (e.touches[0].clientY < window.innerHeight * 0.8) {
+                if(e.cancelable) e.preventDefault();
+                touchX1969 = e.touches[0].clientX;
+            }
+        }, {passive: false});
+        overlay1969.addEventListener('touchend', () => { touchX1969 = null; });
         
         function updateLoop1969() {
             if (!isPlaying1969) return;
             
             const lander = document.getElementById('lander-1969');
+            
+            // X Movement
+            if (keys1969.left) posX1969 -= 0.5;
+            if (keys1969.right) posX1969 += 0.5;
+            if (touchX1969 !== null) {
+                const targetPct = (touchX1969 / window.innerWidth) * 100;
+                if (posX1969 < targetPct - 1) posX1969 += 0.5;
+                if (posX1969 > targetPct + 1) posX1969 -= 0.5;
+            }
+            if (posX1969 < 5) posX1969 = 5;
+            if (posX1969 > 95) posX1969 = 95;
             
             if (thrusterActive1969 && fuel1969 > 0) {
                 lander.classList.add('thrusting');
@@ -9572,6 +9863,7 @@
             }
             
             lander.style.top = altitude1969 + '%';
+            lander.style.left = posX1969 + '%';
             document.getElementById('score-1969').innerText = `Brandstof over: ${Math.floor(fuel1969)} / 100`;
             
             if (altitude1969 >= MAX_ALTITUDE_1969) {
@@ -9589,13 +9881,19 @@
         function checkLanding1969() {
             isPlaying1969 = false;
             
-            if (velocity1969 > SAFE_SPEED_1969 || fuel1969 < 75) {
+            const lander = document.getElementById('lander-1969');
+            const explosion = document.getElementById('explosion-1969');
+            
+            // pad is left: 40%, width: 20% -> 40 to 60
+            // ship is centered on posX1969. let's give a margin of 5
+            const onPad = (posX1969 >= 35 && posX1969 <= 65);
+            
+            if (velocity1969 > SAFE_SPEED_1969 || !onPad) {
                 // Crash
-                const lander = document.getElementById('lander-1969');
                 lander.classList.add('crashed');
                 
-                const explosion = document.getElementById('explosion-1969');
                 explosion.style.top = altitude1969 + '%';
+                explosion.style.left = posX1969 + '%';
                 
                 // Restart explosion animation
                 explosion.classList.remove('active');
@@ -9608,7 +9906,7 @@
                     startMinigame1969();
                 }, 1500);
             } else {
-                // Safe landing and enough fuel
+                // Safe landing
                 setTimeout(() => {
                     document.getElementById('win-modal-1969').classList.add('active');
                     confetti({
@@ -9630,21 +9928,29 @@
         // ==========================================
         // 1972 MINIGAME LOGIC
         // ==========================================
-        const BALANCE_TARGET_1972 = 75; // frames or seconds? Let's use internal counter that represents seconds
+        const BALANCE_TARGET_1972 = 30; // Reduced to 30s to make it fun but not too long
         let balanceTime1972 = 0;
         let pos1972 = 50; // percentage
-        let velocity1972 = 0;
         let isPlaying1972 = false;
-        let isDragging1972 = false;
         let loop1972;
         let lastTime1972 = 0;
+        
+        let trees1972 = 0;
+        let factories1972 = 0;
+        let fallingItems1972 = [];
+        let spawnTimer1972 = 0;
         
         function startMinigame1972() {
             balanceTime1972 = 0;
             pos1972 = 50;
-            velocity1972 = 0;
+            trees1972 = 0;
+            factories1972 = 0;
+            
+            fallingItems1972.forEach(i => i.el.remove());
+            fallingItems1972 = [];
+            spawnTimer1972 = 0;
+            
             isPlaying1972 = true;
-            isDragging1972 = false;
             lastTime1972 = performance.now();
             
             document.getElementById('score-1972').innerText = `Tijd in balans: 0 / ${BALANCE_TARGET_1972} seconden`;
@@ -9653,54 +9959,43 @@
             const indicator = document.getElementById('indicator-1972');
             indicator.style.left = pos1972 + '%';
             
-            const track = document.getElementById('slider-track-1972');
-            
-            const dragHandler = (e) => {
-                if (!isPlaying1972) return;
-                if (e.cancelable) e.preventDefault(); // Prevent scrolling
-                const rect = track.getBoundingClientRect();
-                let clientX;
-                if (e.touches && e.touches.length > 0) {
-                    clientX = e.touches[0].clientX;
-                } else if (e.clientX !== undefined) {
-                    clientX = e.clientX;
-                } else {
-                    return;
-                }
-                
-                let percent = ((clientX - rect.left) / rect.width) * 100;
-                pos1972 = Math.max(0, Math.min(100, percent));
-                velocity1972 = 0;
-                isDragging1972 = true;
-            };
-            
-            const releaseHandler = () => {
-                isDragging1972 = false;
-            };
-            
-            // Clean up to prevent duplicate listeners
-            track.removeEventListener('mousedown', track._dragHandler);
-            track.removeEventListener('touchstart', track._dragHandler);
-            window.removeEventListener('mousemove', track._dragMoveHandler);
-            window.removeEventListener('touchmove', track._dragMoveHandler);
-            window.removeEventListener('mouseup', track._releaseHandler);
-            window.removeEventListener('touchend', track._releaseHandler);
-            
-            track._dragHandler = (e) => { isDragging1972 = true; dragHandler(e); };
-            track._dragMoveHandler = (e) => { if (isDragging1972) dragHandler(e); };
-            track._releaseHandler = releaseHandler;
-            
-            track.addEventListener('mousedown', track._dragHandler);
-            track.addEventListener('touchstart', track._dragHandler, { passive: false });
-            window.addEventListener('mousemove', track._dragMoveHandler, { passive: false });
-            window.addEventListener('touchmove', track._dragMoveHandler, { passive: false });
-            window.addEventListener('mouseup', track._releaseHandler);
-            window.addEventListener('touchend', track._releaseHandler);
-            
             cancelAnimationFrame(loop1972);
             loop1972 = requestAnimationFrame(updateLoop1972);
             
             document.getElementById('game-overlay-1972').classList.add('active');
+        }
+        
+        function addTree1972() {
+            if(!isPlaying1972) return;
+            trees1972++;
+            createFloatingText1972('+ 🌳', '30%');
+        }
+        
+        function addFactory1972() {
+            if(!isPlaying1972) return;
+            factories1972++;
+            createFloatingText1972('+ 🏭', '70%');
+        }
+        
+        function createFloatingText1972(text, leftPct) {
+            const sky = document.getElementById('sky-1972');
+            const el = document.createElement('div');
+            el.innerText = text;
+            el.style.position = 'absolute';
+            el.style.bottom = '0';
+            el.style.left = leftPct;
+            el.style.color = '#fff';
+            el.style.fontWeight = 'bold';
+            el.style.fontSize = '2rem';
+            el.style.textShadow = '2px 2px 4px #000';
+            el.style.transition = 'all 1s ease';
+            sky.appendChild(el);
+            
+            requestAnimationFrame(() => {
+                el.style.bottom = '100px';
+                el.style.opacity = '0';
+            });
+            setTimeout(() => { if (el.parentElement) el.remove(); }, 1000);
         }
         
         function updateLoop1972(time) {
@@ -9708,25 +10003,45 @@
             
             let deltaTime = time - lastTime1972;
             lastTime1972 = time;
-            if (deltaTime > 100) deltaTime = 16; // Prevent huge jumps if tab inactive
+            if (deltaTime > 100) deltaTime = 16;
             
-            // Apply erratic forces
-            if (!isDragging1972) {
-                // Random pushes left or right
-                velocity1972 += (Math.random() - 0.5) * 1.5;
-                velocity1972 *= 0.98; // Friction
-                pos1972 += velocity1972 * (deltaTime / 16);
+            spawnTimer1972 += deltaTime;
+            if (spawnTimer1972 > 800) { // spawn every 800ms
+                spawnTimer1972 = 0;
                 
-                // Bounce off edges
-                if (pos1972 <= 0) {
-                    pos1972 = 0;
-                    velocity1972 = Math.abs(velocity1972) * 0.5;
-                }
-                if (pos1972 >= 100) {
-                    pos1972 = 100;
-                    velocity1972 = -Math.abs(velocity1972) * 0.5;
+                const isTree = Math.random() > 0.5;
+                const el = document.createElement('div');
+                el.innerText = isTree ? '🌳' : '🏭';
+                el.style.position = 'absolute';
+                el.style.top = '-50px';
+                // Trees fall on left (10%-40%), Factories on right (60%-90%)
+                el.style.left = isTree ? (10 + Math.random()*30) + '%' : (60 + Math.random()*30) + '%';
+                el.style.fontSize = '2.5rem';
+                document.getElementById('sky-1972').appendChild(el);
+                
+                fallingItems1972.push({ el, type: isTree ? 'tree' : 'factory', y: -50, speed: 2 + Math.random() });
+            }
+            
+            for(let i=fallingItems1972.length-1; i>=0; i--) {
+                const item = fallingItems1972[i];
+                item.y += item.speed;
+                item.el.style.top = item.y + 'px';
+                
+                if (item.y > document.getElementById('sky-1972').clientHeight) {
+                    if (item.type === 'tree') trees1972++;
+                    else factories1972++;
+                    
+                    item.el.remove();
+                    fallingItems1972.splice(i, 1);
                 }
             }
+            
+            // Calculate scale pos based on difference
+            // 1 diff = 5% shift
+            const diff = factories1972 - trees1972;
+            pos1972 = 50 + (diff * 5);
+            if (pos1972 < 0) pos1972 = 0;
+            if (pos1972 > 100) pos1972 = 100;
             
             const indicator = document.getElementById('indicator-1972');
             const greenZone = document.getElementById('green-zone-1972');
@@ -10048,108 +10363,135 @@
         // ==========================================
         // 1975 MINIGAME LOGIC
         // ==========================================
-        const TARGET_SCORE_1975 = 75;
+        const TARGET_SCORE_1975 = 75; // Goal back to 75
         let score1975 = 0;
         let isPlaying1975 = false;
-        let switchInterval1975;
         let trainInterval1975;
-        let switches1975 = [false, false, false, false]; // false = safe, true = danger
+        let switchDirection1975 = 'V';
         
         function startMinigame1975() {
             score1975 = 0;
             isPlaying1975 = true;
-            switches1975 = [false, false, false, false];
+            switchDirection1975 = 'V';
             
             // reset UI
-            for (let i=0; i<4; i++) {
-                const el = document.getElementById(`sw-1975-${i}`);
-                if (el) {
-                    el.className = 'switch-1975 safe';
-                    el.innerText = Math.random() > 0.5 ? '↕' : '↔';
-                }
+            const el = document.getElementById(`sw-1975-0`);
+            if (el) {
+                el.className = 'switch-1975 safe';
+                el.innerText = '↕';
             }
             
             // clear ambient trains
             const network = document.getElementById('track-network-1975');
-            const oldTrains = network.querySelectorAll('.train-1975');
+            const oldTrains = network.querySelectorAll('.train-1975, .warning-1975');
             oldTrains.forEach(t => t.remove());
             
-            document.getElementById('score-1975').innerText = `Wissels veiliggesteld: 0 / ${TARGET_SCORE_1975}`;
+            document.getElementById('score-1975').innerText = `Treinen veilig gepasseerd: 0 / ${TARGET_SCORE_1975}`;
             document.getElementById('win-modal-1975').classList.remove('active');
             document.getElementById('game-overlay-1975').classList.add('active');
             
-            clearInterval(switchInterval1975);
             clearInterval(trainInterval1975);
             
-            // Every 600ms, randomly set a switch to danger
-            switchInterval1975 = setInterval(() => {
-                if (!isPlaying1975) return;
-                const safeIndices = [];
-                for(let i=0; i<4; i++) {
-                    if (!switches1975[i]) safeIndices.push(i);
-                }
-                if (safeIndices.length > 0) {
-                    const idx = safeIndices[Math.floor(Math.random() * safeIndices.length)];
-                    switches1975[idx] = true;
-                    document.getElementById(`sw-1975-${idx}`).className = 'switch-1975 danger';
-                }
-            }, 600);
-            
-            // Every 2s spawn ambient train
             trainInterval1975 = setInterval(() => {
                 if (!isPlaying1975) return;
                 spawnTrain1975();
-            }, 2000);
+            }, 1200);
         }
         
-        function clickSwitch1975(idx) {
+        function clickSwitch1975(event) {
             if (!isPlaying1975) return;
             if (event && event.cancelable) event.preventDefault(); // stop double touch
             
-            if (switches1975[idx] === true) {
-                // it was danger, we make it safe
-                switches1975[idx] = false;
-                const el = document.getElementById(`sw-1975-${idx}`);
-                el.className = 'switch-1975 safe';
-                el.innerText = Math.random() > 0.5 ? '↕' : '↔';
-                
-                score1975++;
-                document.getElementById('score-1975').innerText = `Wissels veiliggesteld: ${score1975} / ${TARGET_SCORE_1975}`;
-                
-                if (score1975 >= TARGET_SCORE_1975) {
-                    winMinigame1975();
-                }
-            }
+            switchDirection1975 = switchDirection1975 === 'V' ? 'H' : 'V';
+            const el = document.getElementById(`sw-1975-0`);
+            if (el) el.innerText = switchDirection1975 === 'V' ? '↕' : '↔';
         }
         
         function spawnTrain1975() {
             const network = document.getElementById('track-network-1975');
-            const train = document.createElement('div');
-            train.className = 'train-1975';
-            train.innerText = '🚂';
-            
             const routes = [
-                { top: '125px', anim: 'trainMoveH1-1975 3s linear' },
-                { top: '275px', anim: 'trainMoveH2-1975 3s linear' },
-                { left: '85px', anim: 'trainMoveV1-1975 3s linear' },
-                { left: '215px', anim: 'trainMoveV2-1975 3s linear' }
+                { type: 'H', top: '200px', leftStart: '0px', arrow: '➡️', anim: 'trainMoveH1-1975 2s linear' },
+                { type: 'H', top: '200px', leftStart: '300px', arrow: '⬅️', anim: 'trainMoveH2-1975 2s linear' },
+                { type: 'V', left: '150px', topStart: '0px', arrow: '⬇️', anim: 'trainMoveV1-1975 2s linear' },
+                { type: 'V', left: '150px', topStart: '400px', arrow: '⬆️', anim: 'trainMoveV2-1975 2s linear' }
             ];
             const route = routes[Math.floor(Math.random() * routes.length)];
             
-            if (route.top) train.style.top = route.top;
-            if (route.left) train.style.left = route.left;
-            train.style.animation = route.anim;
+            // Warning indicator
+            const warning = document.createElement('div');
+            warning.className = 'warning-1975';
+            warning.innerText = route.arrow;
+            warning.style.position = 'absolute';
+            warning.style.fontSize = '30px';
+            warning.style.zIndex = '20';
+            warning.style.animation = 'pulse-danger-1975 0.5s infinite alternate';
             
-            network.appendChild(train);
+            if (route.type === 'H') {
+                warning.style.top = route.top;
+                warning.style.left = route.leftStart;
+                warning.style.transform = 'translateY(-50%)';
+            } else {
+                warning.style.left = route.left;
+                warning.style.top = route.topStart;
+                warning.style.transform = 'translateX(-50%)';
+            }
+            
+            network.appendChild(warning);
             
             setTimeout(() => {
-                if (train.parentElement) train.remove();
-            }, 3000);
+                if (warning.parentElement) warning.remove();
+                if (!isPlaying1975) return;
+                
+                const train = document.createElement('div');
+                train.className = 'train-1975';
+                train.innerText = '🚂';
+                
+                if (route.type === 'H') train.style.top = route.top;
+                if (route.type === 'V') train.style.left = route.left;
+                train.style.animation = route.anim;
+                
+                network.appendChild(train);
+                
+                setTimeout(() => {
+                    if (!isPlaying1975) {
+                        if (train.parentElement) train.remove();
+                        return;
+                    }
+                    
+                    if (switchDirection1975 === route.type) {
+                        // Safe
+                        score1975++;
+                        document.getElementById('score-1975').innerText = `Treinen veilig gepasseerd: ${Math.min(score1975, TARGET_SCORE_1975)} / ${TARGET_SCORE_1975}`;
+                        const sw = document.getElementById(`sw-1975-0`);
+                        sw.style.backgroundColor = '#2ecc71';
+                        setTimeout(() => sw.style.backgroundColor = '', 200);
+
+                        if (score1975 >= TARGET_SCORE_1975) {
+                            winMinigame1975();
+                        }
+                    } else {
+                        // Crash
+                        train.innerText = '💥';
+                        train.style.fontSize = '3rem';
+                        train.style.animationPlayState = 'paused';
+                        
+                        const sw = document.getElementById(`sw-1975-0`);
+                        sw.style.backgroundColor = '#e74c3c';
+                        setTimeout(() => {
+                            sw.style.backgroundColor = '';
+                            if (train.parentElement) train.remove();
+                        }, 500);
+                    }
+                }, 1000);
+                
+                setTimeout(() => {
+                    if (train.parentElement) train.remove();
+                }, 2000);
+            }, 500);
         }
         
         function winMinigame1975() {
             isPlaying1975 = false;
-            clearInterval(switchInterval1975);
             clearInterval(trainInterval1975);
             
             setTimeout(() => {
@@ -10367,15 +10709,44 @@
                 score1977++;
                 document.getElementById('score-1977').innerText = `Doelen geraakt: ${score1977} / ${TARGET_SCORE_1977}`;
                 
-                // Boom animation
+                // Boom animation & Visual feedback
                 const sky = document.getElementById('sky-area-1977');
+                
+                // Flash sky background
+                const originalBg = sky.style.background;
+                sky.style.background = 'rgba(46, 204, 113, 0.4)'; // soft green
+                setTimeout(() => { sky.style.background = originalBg; }, 150);
+                
                 const boom = document.createElement('div');
                 boom.className = 'sonic-boom-1977';
                 boom.style.left = planePos1977 + '%';
                 boom.style.top = '40%';
                 sky.appendChild(boom);
                 
-                setTimeout(() => { if(boom.parentElement) boom.remove(); }, 600);
+                const plusOne = document.createElement('div');
+                plusOne.innerText = '+1';
+                plusOne.style.position = 'absolute';
+                plusOne.style.left = planePos1977 + '%';
+                plusOne.style.top = '30%';
+                plusOne.style.color = '#2ecc71';
+                plusOne.style.fontWeight = 'bold';
+                plusOne.style.fontSize = '2rem';
+                plusOne.style.textShadow = '1px 1px 2px #000';
+                plusOne.style.transition = 'all 0.5s ease';
+                plusOne.style.transform = 'translate(-50%, -50%)';
+                plusOne.style.zIndex = '50';
+                sky.appendChild(plusOne);
+                
+                // animate up
+                requestAnimationFrame(() => {
+                    plusOne.style.top = '10%';
+                    plusOne.style.opacity = '0';
+                });
+                
+                setTimeout(() => { 
+                    if(boom.parentElement) boom.remove(); 
+                    if(plusOne.parentElement) plusOne.remove();
+                }, 600);
                 
                 // Hide current target briefly, then spawn new
                 const targetEl = document.getElementById('target-1977');
@@ -10501,10 +10872,11 @@
             
             let crashed = false;
             
-            // Wall crash
-            if (snakeX1978 < 0 || snakeX1978 >= TILE_COUNT_1978 || snakeY1978 < 0 || snakeY1978 >= TILE_COUNT_1978) {
-                crashed = true;
-            }
+            // Wall wrap-around
+            if (snakeX1978 < 0) snakeX1978 = TILE_COUNT_1978 - 1;
+            if (snakeX1978 >= TILE_COUNT_1978) snakeX1978 = 0;
+            if (snakeY1978 < 0) snakeY1978 = TILE_COUNT_1978 - 1;
+            if (snakeY1978 >= TILE_COUNT_1978) snakeY1978 = 0;
             
             // Tail crash
             for(let i=0; i<trail1978.length; i++) {
@@ -10847,7 +11219,7 @@
             
             const el = document.createElement('div');
             el.className = 'shield-1981';
-            el.innerText = '🏳️';
+            el.innerText = '☂️';
             el.style.left = posX + '%';
             el.style.top = posY + '%';
             gameArea.appendChild(el);
@@ -14406,110 +14778,117 @@
         // 2013 MINIGAME LOGIC
         // ==========================================
         const TARGET_SCORE_2013 = 75;
-        let score2013 = 0;
         let isPlaying2013 = false;
-        let tickInterval2013;
-        let scoreInterval2013;
-        let tilt2013 = 0;
-        let tiltSpeed2013 = 0;
-        let mouseX2013 = window.innerWidth / 2;
-        let mouseY2013 = window.innerHeight / 2;
+        let puzzleState2013 = []; 
+        const TARGET_STATE_2013 = [-1, -1, -1, 0, 1, 1, 1];
 
         function startMinigame2013() {
-            score2013 = 0;
             isPlaying2013 = true;
-            tilt2013 = 0;
-            tiltSpeed2013 = 0;
-            mouseX2013 = window.innerWidth / 2;
-            mouseY2013 = window.innerHeight / 2;
+            puzzleState2013 = [1, 1, 1, 0, -1, -1, -1];
             
-            document.getElementById('score-2013').innerText = `Seconden in balans: 0 / ${TARGET_SCORE_2013}`;
             document.getElementById('win-modal-2013').classList.remove('active');
             document.getElementById('game-overlay-2013').classList.add('active');
             
-            document.addEventListener('mousemove', handleMouse2013);
-            document.addEventListener('touchmove', handleTouch2013, {passive: false});
-            
-            clearInterval(tickInterval2013);
-            clearInterval(scoreInterval2013);
-            
-            tickInterval2013 = setInterval(updatePhysics2013, 30);
-            scoreInterval2013 = setInterval(updateScore2013, 100); // 100ms = 1 "game second"
+            renderPuzzle2013();
         }
 
-        function handleMouse2013(e) {
-            if(!isPlaying2013) return;
-            mouseX2013 = e.clientX;
-            mouseY2013 = e.clientY;
+        function renderPuzzle2013() {
+            const board = document.getElementById('puzzle-board-2013');
+            board.innerHTML = '';
+            
+            puzzleState2013.forEach((val, idx) => {
+                const tile = document.createElement('div');
+                tile.style.width = '45px';
+                tile.style.height = '45px';
+                tile.style.backgroundColor = 'rgba(255,255,255,0.2)';
+                tile.style.border = '2px solid #f1c40f';
+                tile.style.borderRadius = '5px';
+                tile.style.display = 'flex';
+                tile.style.alignItems = 'center';
+                tile.style.justifyContent = 'center';
+                tile.style.fontSize = '2rem';
+                tile.style.cursor = val !== 0 ? 'grab' : 'default';
+                tile.style.userSelect = 'none';
+                tile.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3)';
+                
+                if (val === 1) tile.innerText = '👸';
+                else if (val === -1) tile.innerText = '🤴';
+                
+                if (val !== 0) {
+                    tile.onclick = () => handlePuzzleClick2013(idx);
+                    tile.draggable = true;
+                    tile.ondragstart = (e) => {
+                        e.dataTransfer.setData('text/plain', idx);
+                        tile.style.opacity = '0.5';
+                    };
+                    tile.ondragend = () => tile.style.opacity = '1';
+                }
+                
+                tile.ondragover = (e) => e.preventDefault();
+                tile.ondrop = (e) => {
+                    e.preventDefault();
+                    if (!isPlaying2013) return;
+                    const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+                    if (isNaN(fromIdx) || fromIdx === idx) return;
+                    
+                    // Easy mode: swap any two tiles!
+                    const temp = puzzleState2013[idx];
+                    puzzleState2013[idx] = puzzleState2013[fromIdx];
+                    puzzleState2013[fromIdx] = temp;
+                    renderPuzzle2013();
+                };
+                
+                board.appendChild(tile);
+            });
+            
+            checkWin2013();
         }
         
-        function handleTouch2013(e) {
-            if(!isPlaying2013) return;
-            if(e.cancelable) e.preventDefault(); // prevent scrolling
-            mouseX2013 = e.touches[0].clientX;
-            mouseY2013 = e.touches[0].clientY;
+        function handlePuzzleClick2013(idx) {
+            if (!isPlaying2013) return;
+            const val = puzzleState2013[idx];
+            if (val === 0) return;
+            
+            const emptyIdx = puzzleState2013.indexOf(0);
+            const dist = emptyIdx - idx;
+            
+            if (val === 1 && (dist === 1 || dist === 2)) {
+                puzzleState2013[emptyIdx] = 1;
+                puzzleState2013[idx] = 0;
+                renderPuzzle2013();
+            }
+            else if (val === -1 && (dist === -1 || dist === -2)) {
+                puzzleState2013[emptyIdx] = -1;
+                puzzleState2013[idx] = 0;
+                renderPuzzle2013();
+            }
         }
-
-        function updatePhysics2013() {
-            if(!isPlaying2013) return;
-            
-            const crown = document.getElementById('crown-2013');
-            const rect = crown.getBoundingClientRect();
-            // Center of the crown element
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            
-            const dist = Math.hypot(mouseX2013 - centerX, mouseY2013 - centerY);
-            const isHovering = dist < 120; // 120px radius sweet spot
-
-            if (isHovering) {
-                // Player is balancing it
-                tiltSpeed2013 *= 0.7; 
-                tilt2013 *= 0.8; 
-                crown.style.filter = 'drop-shadow(0 0 25px #f1c40f)';
-            } else {
-                // Falling out of balance
-                tiltSpeed2013 += (Math.random() - 0.5) * 5; // random wobble
-                tiltSpeed2013 += tilt2013 * 0.05; // gravity pulls it further down
-                tilt2013 += tiltSpeed2013;
-                crown.style.filter = 'drop-shadow(0 10px 15px rgba(0,0,0,0.5))';
+        
+        function checkWin2013() {
+            let win = true;
+            for(let i = 0; i < TARGET_STATE_2013.length; i++) {
+                if (puzzleState2013[i] !== TARGET_STATE_2013[i]) {
+                    win = false;
+                    break;
+                }
             }
             
-            // Cap tilt so it doesn't spin wildly
-            if (tilt2013 > 90) { tilt2013 = 90; tiltSpeed2013 = 0; }
-            if (tilt2013 < -90) { tilt2013 = -90; tiltSpeed2013 = 0; }
-            
-            crown.style.transform = `rotate(${tilt2013}deg)`;
-        }
-
-        function updateScore2013() {
-            if(!isPlaying2013) return;
-            // Only score if the crown is relatively balanced
-            if (Math.abs(tilt2013) < 45) {
-                score2013++;
-                document.getElementById('score-2013').innerText = `Seconden in balans: ${Math.min(score2013, TARGET_SCORE_2013)} / ${TARGET_SCORE_2013}`;
-                
-                if(score2013 >= TARGET_SCORE_2013) {
-                    winMinigame2013();
-                }
+            if (win && isPlaying2013) {
+                winMinigame2013();
             }
         }
 
         function winMinigame2013() {
             isPlaying2013 = false;
-            clearInterval(tickInterval2013);
-            clearInterval(scoreInterval2013);
-            
-            document.removeEventListener('mousemove', handleMouse2013);
-            document.removeEventListener('touchmove', handleTouch2013);
-            
-            document.getElementById('crown-2013').style.transform = 'rotate(0deg)';
             
             setTimeout(() => {
                 document.getElementById('win-modal-2013').classList.add('active');
                 confetti({
-                    particleCount: 150, spread: 80, origin: { y: 0.6 },
-                    zIndex: 2500, colors: ['#f1c40f', '#e67e22', '#ffffff'] // Gold/Orange
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    zIndex: 2500,
+                    colors: ['#f1c40f', '#e67e22', '#ffffff']
                 });
             }, 300);
         }
@@ -14580,9 +14959,10 @@
             const sky = document.getElementById('sky-container-2014');
             const el = document.createElement('div');
             el.className = 'rocket-2014';
-            el.innerText = '🚀';
+            el.innerText = '✈️';
+            el.style.transform = 'scaleX(1)'; // Face right
             
-            let pos = window.innerWidth;
+            let pos = -100; // Start offscreen left
             let yPos = Math.random() * 80 + 10; // 10% to 90%
             
             el.style.left = pos + 'px';
@@ -14612,8 +14992,8 @@
             
             const storkEl = document.getElementById('stork-2014');
             storkEl.style.top = storkY2014 + '%';
-            // Slight rotation based on velocity
-            storkEl.style.transform = `translateY(-50%) rotate(${storkVY2014 * 10}deg)`;
+            // Slight rotation based on velocity (flamingo faces right due to inner span flip, so we don't scaleX the container)
+            storkEl.style.transform = `translateY(-50%) rotate(${storkVY2014 * 5}deg)`;
             
             // Rocket physics & collision
             const storkRect = storkEl.getBoundingClientRect();
@@ -14624,7 +15004,7 @@
             const sRight = storkRect.right - 10;
             
             rockets2014.forEach(r => {
-                r.pos -= r.speed;
+                r.pos += r.speed; // Move RIGHT
                 r.el.style.left = r.pos + 'px';
                 
                 if (!r.hit && !r.passed) {
@@ -14641,8 +15021,8 @@
                         const overlay = document.getElementById('game-overlay-2014');
                         overlay.classList.add('flash-red');
                         setTimeout(() => overlay.classList.remove('flash-red'), 300);
-                    } else if (rRight < sLeft) {
-                        // PASSED!
+                    } else if (rLeft > sRight) {
+                        // PASSED! (Plane is to the right of stork)
                         r.passed = true;
                         score2014++;
                         document.getElementById('score-2014').innerText = `Afstand overbrugd: ${Math.min(score2014, TARGET_SCORE_2014)} / ${TARGET_SCORE_2014} (Op weg naar huisnummer 66)`;
@@ -14655,7 +15035,7 @@
             
             // cleanup
             rockets2014 = rockets2014.filter(r => {
-                if(r.pos < -100) {
+                if(r.pos > window.innerWidth + 100) {
                     r.el.remove();
                     return false;
                 }
