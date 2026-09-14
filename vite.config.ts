@@ -6,7 +6,31 @@ import {defineConfig} from 'vite';
 export default defineConfig(() => {
   return {
     base: './',
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      {
+        name: 'stl-download-header',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            if (req.url && req.url.includes('75JAAR.stl')) {
+              res.setHeader('Content-Disposition', 'attachment; filename="75JAAR.stl"');
+              res.setHeader('Content-Type', 'application/octet-stream');
+            }
+            next();
+          });
+        },
+        configurePreviewServer(server) {
+          server.middlewares.use((req, res, next) => {
+            if (req.url && req.url.includes('75JAAR.stl')) {
+              res.setHeader('Content-Disposition', 'attachment; filename="75JAAR.stl"');
+              res.setHeader('Content-Type', 'application/octet-stream');
+            }
+            next();
+          });
+        },
+      },
+    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

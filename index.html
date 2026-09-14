@@ -4526,7 +4526,7 @@
 <body>
 
     <header>
-        <a href="/75JAAR.stl" download="75JAAR.stl" id="reward-btn" class="retro-btn" onclick="openCelebrationModal(event)" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 1000; background: #f1c40f; color: #111; font-weight: bold; border: 3px solid #d35400; text-decoration: none; animation: pulse-gold 2s infinite;">PRIJS</a>
+        <button id="reward-btn" class="retro-btn" onclick="handleRewardBtnClick(event)" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 1000; background: #f1c40f; color: #111; font-weight: bold; border: 3px solid #d35400; text-decoration: none; animation: pulse-gold 2s infinite; cursor: pointer;">PRIJS</button>
         <h1 class="header-title" id="scoreboard">Geverifieerde Leeftijd: <span id="age-counter">-</span> / 75</h1>
         <div class="progress-container">
             <div class="progress-bar" id="progress-bar"></div>
@@ -6479,14 +6479,18 @@
     <div class="modal-overlay" id="celebration-modal">
         <div class="modal-content" style="max-width: 620px; padding: 45px 30px; text-align: center;">
             <div style="font-size: 3.5rem; margin-bottom: 12px; line-height: 1;">🏆</div>
-            <p class="modal-text" style="font-size: clamp(1.2rem, 3.8vw, 1.45rem); font-weight: 700; color: #FFF; line-height: 1.5; margin-bottom: 28px; text-shadow: 0 2px 8px rgba(0,0,0,0.6);">
+            <p class="modal-text" style="font-size: clamp(1.2rem, 3.8vw, 1.45rem); font-weight: 700; color: #FFF; line-height: 1.5; margin-bottom: 24px; text-shadow: 0 2px 8px rgba(0,0,0,0.6);">
                 Gefeliciteerd! Je hebt bewezen dat je ECHT 75 jaar bent, fantastisch! Download je prijs!
             </p>
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 14px;">
-                <a href="/75JAAR.stl" download="75JAAR.stl" id="modal-prize-btn" class="modal-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-size: 1.5rem; font-weight: 800; padding: 16px 52px; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #000; border-radius: 14px; border: 3px solid #FFF; box-shadow: 0 0 25px rgba(255, 215, 0, 0.75), 0 8px 18px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                <button id="modal-prize-btn" onclick="downloadPrizeFile(event)" class="modal-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-size: 1.5rem; font-weight: 800; padding: 16px 52px; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #000; border-radius: 14px; border: 3px solid #FFF; box-shadow: 0 0 25px rgba(255, 215, 0, 0.75), 0 8px 18px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
                     PRIJS
+                </button>
+                <div id="download-status-msg" style="min-height: 20px; font-size: 0.95rem; font-weight: 600; color: #F1C40F;"></div>
+                <a href="./75JAAR.stl" download="75JAAR.stl" target="_blank" rel="noopener noreferrer" style="color: #94A3B8; font-size: 0.85rem; text-decoration: underline; margin-top: -2px;">
+                    Download link (opent in nieuw venster)
                 </a>
-                <button class="modal-btn" onclick="closeModal()" style="background: transparent; color: #94A3B8; border: 1px solid rgba(148, 163, 184, 0.35); box-shadow: none; font-size: 0.95rem; font-weight: 600; padding: 8px 24px; border-radius: 8px; cursor: pointer;">
+                <button class="modal-btn" onclick="closeModal()" style="background: transparent; color: #94A3B8; border: 1px solid rgba(148, 163, 184, 0.35); box-shadow: none; font-size: 0.95rem; font-weight: 600; padding: 8px 24px; border-radius: 8px; cursor: pointer; margin-top: 6px;">
                     Sluiten
                 </button>
             </div>
@@ -16869,8 +16873,119 @@
             }
         }
 
+        function handleRewardBtnClick(e) {
+            if (e) e.preventDefault();
+            openCelebrationModal();
+        }
+
         function openCelebrationModal(e) {
-            if (modal) modal.classList.add('active');
+            if (e) e.preventDefault();
+            if (modal) {
+                modal.classList.add('active');
+                triggerGrandConfetti();
+            }
+        }
+
+        async function downloadPrizeFile(e) {
+            if (e) e.preventDefault();
+            const btn = document.getElementById('modal-prize-btn');
+            const statusMsg = document.getElementById('download-status-msg');
+            const originalHtml = btn ? btn.innerHTML : 'PRIJS';
+
+            if (btn) {
+                btn.innerHTML = '⏳ Bezig met downloaden...';
+                btn.style.pointerEvents = 'none';
+            }
+            if (statusMsg) {
+                statusMsg.innerText = 'Bestand 75JAAR.stl wordt klaargezet...';
+                statusMsg.style.color = '#F1C40F';
+            }
+
+            try {
+                // Fetch the STL file directly from public root
+                const res = await fetch('./75JAAR.stl');
+                if (!res.ok) throw new Error('HTTP status ' + res.status);
+                const blob = await res.blob();
+
+                // Create blob URL with explicit application/octet-stream
+                const fileBlob = new Blob([blob], { type: 'application/octet-stream' });
+                const blobUrl = window.URL.createObjectURL(fileBlob);
+
+                // Method 1: Programmatic anchor download
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = '75JAAR.stl';
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                document.body.appendChild(link);
+                link.click();
+
+                // Method 2: Convert to data URL for iframe environments that block blob downloads
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    try {
+                        const dataUrl = reader.result;
+                        const dataLink = document.createElement('a');
+                        dataLink.href = dataUrl;
+                        dataLink.download = '75JAAR.stl';
+                        dataLink.target = '_blank';
+                        document.body.appendChild(dataLink);
+                        dataLink.click();
+                        setTimeout(() => { if (dataLink.parentNode) dataLink.parentNode.removeChild(dataLink); }, 1000);
+                    } catch (e2) {
+                        console.warn('DataURL download attempt:', e2);
+                    }
+                };
+                reader.readAsDataURL(fileBlob);
+
+                // Method 3: In iframe contexts (preview), window.open triggers browser attachment download
+                if (window.self !== window.top) {
+                    try {
+                        window.open('./75JAAR.stl', '_blank');
+                    } catch (e3) {
+                        console.warn('window.open attempt:', e3);
+                    }
+                }
+
+                setTimeout(() => {
+                    if (link.parentNode) link.parentNode.removeChild(link);
+                    window.URL.revokeObjectURL(blobUrl);
+                }, 2000);
+
+                if (btn) {
+                    btn.innerHTML = '🎉 75JAAR.stl Gedownload!';
+                    btn.style.pointerEvents = 'auto';
+                }
+                if (statusMsg) {
+                    statusMsg.innerText = '✅ Het bestand 75JAAR.stl is gedownload naar je computer!';
+                    statusMsg.style.color = '#2ECC71';
+                }
+
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    zIndex: 5000,
+                    colors: ['#FFD700', '#FFA500', '#FFFFFF', '#2ECC71']
+                });
+
+                setTimeout(() => {
+                    if (btn) btn.innerHTML = originalHtml;
+                }, 4000);
+
+            } catch (err) {
+                console.error('Download error:', err);
+                if (statusMsg) {
+                    statusMsg.innerText = 'Download gestart via nieuw venster...';
+                    statusMsg.style.color = '#E67E22';
+                }
+                // Direct window.open fallback
+                window.open('./75JAAR.stl', '_blank');
+                if (btn) {
+                    btn.innerHTML = originalHtml;
+                    btn.style.pointerEvents = 'auto';
+                }
+            }
         }
 
         // Epic Confetti Explosion
