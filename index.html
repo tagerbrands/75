@@ -6682,8 +6682,7 @@
             }
             if (y === 1975) {
                 isPlaying1975 = false;
-                clearInterval(switchInterval1975);
-                clearInterval(trainInterval1975);
+                if (typeof trainInterval1975 !== 'undefined') clearInterval(trainInterval1975);
             }
             if (y === 1976) {
                 isPlaying1976 = false;
@@ -6864,10 +6863,6 @@
             }
             if (y === 2013) {
                 isPlaying2013 = false;
-                clearInterval(tickInterval2013);
-                clearInterval(scoreInterval2013);
-                document.removeEventListener('mousemove', handleMouse2013);
-                document.removeEventListener('touchmove', handleTouch2013);
             }
             if (y === 2014) {
                 isPlaying2014 = false;
@@ -6952,10 +6947,8 @@
         }
 
         function finishMinigame(year) {
+            completeGame(year);
             closeGameOverlay(year, true);
-            setTimeout(() => {
-                completeGame(year);
-            }, 300);
         }
 
         // Support mobile hardware/browser back button
@@ -10492,7 +10485,8 @@
         
         function winMinigame1975() {
             isPlaying1975 = false;
-            clearInterval(trainInterval1975);
+            if (typeof trainInterval1975 !== 'undefined') clearInterval(trainInterval1975);
+            completeGame(1975);
             
             setTimeout(() => {
                 document.getElementById('win-modal-1975').classList.add('active');
