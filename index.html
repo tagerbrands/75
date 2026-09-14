@@ -3811,33 +3811,128 @@
         /* 2013 MINIGAME CSS */
         .game-overlay-2013 {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            padding-top: 55px; padding-bottom: 25px;
             opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
-            background: linear-gradient(135deg, #8e0000 0%, #c0392b 100%); /* Royal red */
-            overflow: hidden; visibility: hidden; touch-action: none;
+            background: radial-gradient(circle at center, #8a0e0e 0%, #4a0202 100%); /* Royal velvet red */
+            overflow-y: auto; overflow-x: hidden; visibility: hidden; touch-action: manipulation;
         }
         .game-overlay-2013.active { opacity: 1; pointer-events: auto; visibility: visible; }
 
         .score-2013 {
-            position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
-            background: #fff; padding: 10px 25px; border-radius: 5px;
-            font-weight: bold; font-family: 'Courier New', monospace; font-size: clamp(0.95rem, 3.5vw, 1.2rem);
+            background: rgba(255, 255, 255, 0.96); padding: 8px 22px; border-radius: 20px;
+            font-weight: bold; font-family: 'Courier New', monospace; font-size: clamp(0.95rem, 3.5vw, 1.15rem);
             color: #8e0000; z-index: 30;
-            border: 3px solid #f1c40f; max-width: 90vw; text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            border: 3px solid #f1c40f; max-width: 92vw; text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            margin-bottom: 8px;
         }
 
-        .crown-container-2013 {
-            position: relative; width: 300px; height: 300px;
-            display: flex; align-items: center; justify-content: center;
+        .royal-stage-2013 {
+            display: flex; flex-direction: column; align-items: center;
+            width: 95%; max-width: 520px;
+            background: rgba(0, 0, 0, 0.38);
+            border: 2px solid rgba(241, 196, 15, 0.55);
+            border-radius: 16px;
+            padding: 12px 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            margin-top: 4px;
         }
-        
-        .crown-2013 {
-            font-size: 8rem; user-select: none;
-            transform-origin: bottom center; 
-            transition: filter 0.2s;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
-            pointer-events: none; /* Let the container handle mouse events if needed, but we track document mouse */
+
+        .royal-row-2013 {
+            width: 100%;
+            margin: 4px 0;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .royal-row-header-2013 {
+            font-size: clamp(0.85rem, 3vw, 1rem);
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            padding: 4px 14px;
+            border-radius: 12px;
+            margin-bottom: 6px;
+            display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            user-select: none;
+        }
+        .royal-header-king-2013 {
+            background: linear-gradient(90deg, #d35400, #e67e22);
+            color: #fff; border: 1px solid #f39c12;
+        }
+        .royal-header-queen-2013 {
+            background: linear-gradient(90deg, #8e44ad, #9b59b6);
+            color: #fff; border: 1px solid #bb86fc;
+        }
+
+        .royal-slots-2013 {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: nowrap;
+            width: 100%;
+            padding: 4px 0;
+        }
+
+        .royal-tile-2013 {
+            width: clamp(52px, 14vw, 68px);
+            height: clamp(58px, 16vw, 76px);
+            background: rgba(255, 255, 255, 0.16);
+            border: 2.5px solid rgba(255, 255, 255, 0.45);
+            border-radius: 10px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: clamp(1.8rem, 6.5vw, 2.5rem);
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            touch-action: manipulation;
+        }
+
+        .royal-tile-2013:active {
+            transform: scale(0.95);
+        }
+
+        .royal-tile-2013.selected {
+            border-color: #f1c40f !important;
+            background: rgba(241, 196, 15, 0.35) !important;
+            box-shadow: 0 0 16px #f1c40f, 0 6px 12px rgba(0,0,0,0.5);
+            z-index: 10;
+            animation: royalPulse2013 0.8s infinite alternate ease-in-out;
+        }
+
+        @keyframes royalPulse2013 {
+            from { transform: scale(1.08) translateY(-2px); }
+            to { transform: scale(1.15) translateY(-5px); }
+        }
+
+        .royal-tile-2013.correct {
+            border-color: #2ecc71;
+            background: rgba(46, 204, 113, 0.28);
+        }
+        .royal-tile-2013.correct::after {
+            content: '✓';
+            position: absolute; top: 2px; right: 4px;
+            font-size: 0.85rem; font-weight: bold; color: #2ecc71;
+            text-shadow: 0 0 4px #000;
+        }
+
+        .royal-tile-2013.wrong {
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.22);
+        }
+
+        .round-banner-2013 {
+            font-size: clamp(0.9rem, 3.2vw, 1.05rem);
+            color: #f1c40f;
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: center;
+            min-height: 24px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            max-width: 90vw;
         }
 
         /* 2015 MINIGAME CSS */
@@ -6013,18 +6108,44 @@
             <div class="game-year-display" style="color: #f1c40f; text-shadow: 2px 2px 0px #000;">2013</div>
         </div>
         
-        <div class="score-2013" id="score-2013">Verwissel de koninginnen (links) en koningen (rechts)</div>
-        
-        <div style="display: flex; gap: 10px; margin-top: 50px;" id="puzzle-board-2013">
-            <!-- Tiles injected by JS -->
+        <div class="score-2013" id="score-2013">Troonwisseling: 0 / 75 punten</div>
+
+        <div style="color: #fff; text-align: center; font-size: clamp(0.85rem, 3.2vw, 1.05rem); margin-bottom: 6px; max-width: 480px; padding: 0 12px; text-shadow: 1px 1px 2px #000; line-height: 1.4;">
+            👑 <strong>Tik op twee figuren</strong> om ze met elkaar van troon te verwisselen!
         </div>
-        
-        <div style="margin-top: 30px; font-size: 1.2rem; color: #fff; max-width: 400px; text-align: center;">
-            Klik op een figuur om deze te verplaatsen naar een leeg vakje direct ernaast, of spring over maximaal 1 ander figuur.
+
+        <div class="royal-stage-2013">
+            <!-- King Row -->
+            <div class="royal-row-2013">
+                <div class="royal-row-header-2013 royal-header-king-2013">
+                    🦁 Troon der Koningen (Willem-Alexander)
+                </div>
+                <div class="royal-slots-2013" id="king-slots-2013">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+
+            <!-- Swap indicator divider -->
+            <div style="font-size: 1.2rem; color: #f1c40f; margin: 4px 0; user-select: none; display: flex; align-items: center; gap: 8px;">
+                <span>↕</span> <span style="font-size: 0.8rem; font-weight: bold; letter-spacing: 1px; color: #ffeb3b;">VERWISSEL</span> <span>↕</span>
+            </div>
+
+            <!-- Queen Row -->
+            <div class="royal-row-2013">
+                <div class="royal-row-header-2013 royal-header-queen-2013">
+                    👑 Troon der Koninginnen (Beatrix)
+                </div>
+                <div class="royal-slots-2013" id="queen-slots-2013">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
         </div>
-        
-        <div style="margin-top: 30px;">
-            <button class="retro-btn" onclick="startMinigame2013()" style="background: #e67e22; color: #fff;">Opnieuw Beginnen</button>
+
+        <div class="round-banner-2013" id="round-banner-2013">Ronde 1 van 5: Breng de koningen en koninginnen naar hun eigen troon!</div>
+
+        <div style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+            <button class="retro-btn" onclick="resetCurrentRound2013()" style="background: #e67e22; color: #fff; font-size: 0.9rem; padding: 7px 16px;">Herstart Ronde</button>
+            <button class="retro-btn" onclick="startMinigame2013()" style="background: #c0392b; color: #fff; font-size: 0.9rem; padding: 7px 16px;">Opnieuw Beginnen</button>
         </div>
         
         <div class="retro-modal" id="win-modal-2013" style="z-index: 50; border: 3px solid #f1c40f;">
@@ -14782,120 +14903,265 @@
         // ==========================================
 
         // ==========================================
-        // 2013 MINIGAME LOGIC
+        // 2013 MINIGAME LOGIC - KONINKLIJKE TROONWISSELING
         // ==========================================
         const TARGET_SCORE_2013 = 75;
+        const TOTAL_ROUNDS_2013 = 5;
+        let score2013 = 0;
+        let currentRound2013 = 1;
         let isPlaying2013 = false;
-        let puzzleState2013 = []; 
-        const TARGET_STATE_2013 = [-1, -1, -1, 0, 1, 1, 1];
+        let isTransitioningRound2013 = false;
+        let kingRowState2013 = [];
+        let queenRowState2013 = [];
+        let selectedTile2013 = null; // { row: 'king' | 'queen', col: number }
+
+        function playChime2013(type) {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const now = ctx.currentTime;
+                if (type === 'swap') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.12);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.18);
+                } else if (type === 'round') {
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, now + i * 0.08);
+                        gain.gain.setValueAtTime(0.18, now + i * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.25);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + i * 0.08);
+                        osc.stop(now + i * 0.08 + 0.25);
+                    });
+                }
+            } catch(e) { /* ignore audio errors in restricted environments */ }
+        }
 
         function startMinigame2013() {
             isPlaying2013 = true;
-            puzzleState2013 = [1, 1, 1, 0, -1, -1, -1];
+            isTransitioningRound2013 = false;
+            score2013 = 0;
+            currentRound2013 = 1;
+            selectedTile2013 = null;
             
             document.getElementById('win-modal-2013').classList.remove('active');
             document.getElementById('game-overlay-2013').classList.add('active');
             
-            renderPuzzle2013();
+            updateScoreDisplay2013();
+            setupRound2013(1);
         }
 
-        function renderPuzzle2013() {
-            const board = document.getElementById('puzzle-board-2013');
-            board.innerHTML = '';
-            
-            puzzleState2013.forEach((val, idx) => {
-                const tile = document.createElement('div');
-                tile.style.width = '45px';
-                tile.style.height = '45px';
-                tile.style.backgroundColor = 'rgba(255,255,255,0.2)';
-                tile.style.border = '2px solid #f1c40f';
-                tile.style.borderRadius = '5px';
-                tile.style.display = 'flex';
-                tile.style.alignItems = 'center';
-                tile.style.justifyContent = 'center';
-                tile.style.fontSize = '2rem';
-                tile.style.cursor = val !== 0 ? 'grab' : 'default';
-                tile.style.userSelect = 'none';
-                tile.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3)';
-                
-                if (val === 1) tile.innerText = '👸';
-                else if (val === -1) tile.innerText = '🤴';
-                
-                if (val !== 0) {
-                    tile.onclick = () => handlePuzzleClick2013(idx);
-                    tile.draggable = true;
-                    tile.ondragstart = (e) => {
-                        e.dataTransfer.setData('text/plain', idx);
-                        tile.style.opacity = '0.5';
-                    };
-                    tile.ondragend = () => tile.style.opacity = '1';
-                }
-                
-                tile.ondragover = (e) => e.preventDefault();
-                tile.ondrop = (e) => {
-                    e.preventDefault();
-                    if (!isPlaying2013) return;
-                    const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
-                    if (isNaN(fromIdx) || fromIdx === idx) return;
-                    
-                    // Easy mode: swap any two tiles!
-                    const temp = puzzleState2013[idx];
-                    puzzleState2013[idx] = puzzleState2013[fromIdx];
-                    puzzleState2013[fromIdx] = temp;
-                    renderPuzzle2013();
-                };
-                
-                board.appendChild(tile);
-            });
-            
-            checkWin2013();
+        function updateScoreDisplay2013() {
+            const scoreEl = document.getElementById('score-2013');
+            if (scoreEl) {
+                scoreEl.innerText = `Troonwisseling: ${score2013} / ${TARGET_SCORE_2013} punten (Ronde ${currentRound2013}/${TOTAL_ROUNDS_2013})`;
+            }
         }
-        
-        function handlePuzzleClick2013(idx) {
+
+        function setupRound2013(roundNum) {
+            currentRound2013 = roundNum;
+            selectedTile2013 = null;
+            isTransitioningRound2013 = false;
+            updateScoreDisplay2013();
+
+            if (roundNum === 1) {
+                kingRowState2013 = ['Q', 'Q'];
+                queenRowState2013 = ['K', 'K'];
+            } else if (roundNum === 2) {
+                kingRowState2013 = ['Q', 'K', 'Q'];
+                queenRowState2013 = ['K', 'Q', 'K'];
+            } else if (roundNum === 3) {
+                kingRowState2013 = ['Q', 'Q', 'K', 'Q'];
+                queenRowState2013 = ['K', 'K', 'Q', 'K'];
+            } else if (roundNum === 4) {
+                kingRowState2013 = ['Q', 'Q', 'Q', 'K'];
+                queenRowState2013 = ['K', 'K', 'K', 'Q'];
+            } else {
+                kingRowState2013 = ['Q', 'Q', 'K', 'Q', 'Q'];
+                queenRowState2013 = ['K', 'K', 'Q', 'K', 'K'];
+            }
+
+            const banner = document.getElementById('round-banner-2013');
+            if (banner) {
+                banner.innerText = `Ronde ${roundNum} van ${TOTAL_ROUNDS_2013}: Verwissel de Koningen 🤴 naar boven en Koninginnen 👸 naar beneden!`;
+            }
+
+            renderBoard2013();
+        }
+
+        function resetCurrentRound2013() {
             if (!isPlaying2013) return;
-            const val = puzzleState2013[idx];
-            if (val === 0) return;
-            
-            const emptyIdx = puzzleState2013.indexOf(0);
-            const dist = emptyIdx - idx;
-            
-            if (val === 1 && (dist === 1 || dist === 2)) {
-                puzzleState2013[emptyIdx] = 1;
-                puzzleState2013[idx] = 0;
-                renderPuzzle2013();
-            }
-            else if (val === -1 && (dist === -1 || dist === -2)) {
-                puzzleState2013[emptyIdx] = -1;
-                puzzleState2013[idx] = 0;
-                renderPuzzle2013();
-            }
+            setupRound2013(currentRound2013);
         }
-        
-        function checkWin2013() {
-            let win = true;
-            for(let i = 0; i < TARGET_STATE_2013.length; i++) {
-                if (puzzleState2013[i] !== TARGET_STATE_2013[i]) {
-                    win = false;
-                    break;
+
+        function renderBoard2013() {
+            const kingContainer = document.getElementById('king-slots-2013');
+            const queenContainer = document.getElementById('queen-slots-2013');
+            if (!kingContainer || !queenContainer) return;
+
+            kingContainer.innerHTML = '';
+            queenContainer.innerHTML = '';
+
+            kingRowState2013.forEach((val, col) => {
+                const tile = createTileElement2013('king', col, val);
+                kingContainer.appendChild(tile);
+            });
+
+            queenRowState2013.forEach((val, col) => {
+                const tile = createTileElement2013('queen', col, val);
+                queenContainer.appendChild(tile);
+            });
+        }
+
+        function createTileElement2013(row, col, val) {
+            const tile = document.createElement('div');
+            tile.className = 'royal-tile-2013';
+            tile.id = `royal-tile-2013-${row}-${col}`;
+            tile.innerText = (val === 'K') ? '🤴' : '👸';
+
+            const isCorrect = (row === 'king' && val === 'K') || (row === 'queen' && val === 'Q');
+            if (isCorrect) {
+                tile.classList.add('correct');
+                tile.title = (val === 'K') ? 'Koning staat op de juiste troon!' : 'Koningin staat op de juiste troon!';
+            } else {
+                tile.classList.add('wrong');
+                tile.title = (val === 'K') ? 'Koning moet naar de Koningstroon!' : 'Koningin moet naar de Koninginnentroon!';
+            }
+
+            if (selectedTile2013 && selectedTile2013.row === row && selectedTile2013.col === col) {
+                tile.classList.add('selected');
+            }
+
+            tile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                handleTileClick2013(row, col);
+            });
+
+            return tile;
+        }
+
+        function handleTileClick2013(row, col) {
+            if (!isPlaying2013 || isTransitioningRound2013) return;
+
+            if (!selectedTile2013) {
+                selectedTile2013 = { row, col };
+                playChime2013('swap');
+                renderBoard2013();
+                const banner = document.getElementById('round-banner-2013');
+                if (banner) {
+                    const currentVal = (row === 'king' ? kingRowState2013[col] : queenRowState2013[col]);
+                    const figureName = (currentVal === 'K') ? 'Koning 🤴' : 'Koningin 👸';
+                    banner.innerText = `${figureName} geselecteerd! Tik nu op een ander figuur om te wisselen.`;
+                }
+                return;
+            }
+
+            if (selectedTile2013.row === row && selectedTile2013.col === col) {
+                selectedTile2013 = null;
+                renderBoard2013();
+                const banner = document.getElementById('round-banner-2013');
+                if (banner) {
+                    banner.innerText = `Ronde ${currentRound2013} van ${TOTAL_ROUNDS_2013}: Tik op twee figuren om te verwisselen!`;
+                }
+                return;
+            }
+
+            const fromRow = selectedTile2013.row;
+            const fromCol = selectedTile2013.col;
+            const val1 = (fromRow === 'king') ? kingRowState2013[fromCol] : queenRowState2013[fromCol];
+            const val2 = (row === 'king') ? kingRowState2013[col] : queenRowState2013[col];
+
+            if (fromRow === 'king') {
+                kingRowState2013[fromCol] = val2;
+            } else {
+                queenRowState2013[fromCol] = val2;
+            }
+
+            if (row === 'king') {
+                kingRowState2013[col] = val1;
+            } else {
+                queenRowState2013[col] = val1;
+            }
+
+            selectedTile2013 = null;
+            playChime2013('swap');
+            renderBoard2013();
+
+            const allKingsInPlace = kingRowState2013.every(v => v === 'K');
+            const allQueensInPlace = queenRowState2013.every(v => v === 'Q');
+
+            if (allKingsInPlace && allQueensInPlace) {
+                onRoundComplete2013();
+            } else {
+                const banner = document.getElementById('round-banner-2013');
+                if (banner) {
+                    banner.innerText = `Figuren verwisseld! Ga door tot alle vinkjes ✓ groen zijn.`;
                 }
             }
-            
-            if (win && isPlaying2013) {
-                winMinigame2013();
+        }
+
+        function onRoundComplete2013() {
+            isTransitioningRound2013 = true;
+            score2013 = Math.min(TARGET_SCORE_2013, currentRound2013 * 15);
+            updateScoreDisplay2013();
+            playChime2013('round');
+
+            confetti({
+                particleCount: 80,
+                spread: 60,
+                origin: { y: 0.6 },
+                zIndex: 2500,
+                colors: ['#f1c40f', '#e67e22', '#bb86fc']
+            });
+
+            if (currentRound2013 < TOTAL_ROUNDS_2013) {
+                const banner = document.getElementById('round-banner-2013');
+                if (banner) {
+                    banner.innerText = `✨ Uitstekend! Ronde ${currentRound2013} voltooid (+15 punten)`;
+                }
+                setTimeout(() => {
+                    if (isPlaying2013) {
+                        setupRound2013(currentRound2013 + 1);
+                    }
+                }, 850);
+            } else {
+                score2013 = TARGET_SCORE_2013;
+                updateScoreDisplay2013();
+                const banner = document.getElementById('round-banner-2013');
+                if (banner) {
+                    banner.innerText = `👑 Troonwisseling geslaagd! Alle koningen en koninginnen staan op hun troon!`;
+                }
+                setTimeout(() => {
+                    winMinigame2013();
+                }, 700);
             }
         }
 
         function winMinigame2013() {
             isPlaying2013 = false;
+            completeGame(2013);
             
             setTimeout(() => {
                 document.getElementById('win-modal-2013').classList.add('active');
                 confetti({
-                    particleCount: 150,
-                    spread: 80,
+                    particleCount: 160,
+                    spread: 85,
                     origin: { y: 0.6 },
                     zIndex: 2500,
-                    colors: ['#f1c40f', '#e67e22', '#ffffff']
+                    colors: ['#f1c40f', '#e67e22', '#ffffff', '#e74c3c']
                 });
             }, 300);
         }
