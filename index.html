@@ -10880,9 +10880,8 @@
             }
             
             if (crashed) {
-                // Penalty but no game over
-                tail1978 = Math.max(1, Math.floor(tail1978 / 2));
-                score1978 = tail1978 - 1;
+                // Reset snake length, keep accumulated score intact
+                tail1978 = 1;
                 
                 snakeX1978 = 10; snakeY1978 = 10;
                 velX1978 = 0; velY1978 = 0;
@@ -10957,6 +10956,7 @@
             isPlaying1978 = false;
             clearInterval(snakeInterval1978);
             document.removeEventListener('keydown', keyPush1978);
+            completeGame(1978);
             
             setTimeout(() => {
                 document.getElementById('win-modal-1978').classList.add('active');
