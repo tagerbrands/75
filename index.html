@@ -2955,24 +2955,25 @@
 
         .bubble-1993 {
             position: absolute;
-            width: 60px; height: 60px;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(255,255,255,0.2));
-            border: 2px solid rgba(255,255,255,0.6);
+            width: 65px; height: 65px;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(160, 220, 255, 0.45) 55%, rgba(41, 128, 185, 0.6));
+            border: 2px solid rgba(255,255,255,0.85);
             border-radius: 50%;
             z-index: 20;
             cursor: pointer;
             pointer-events: auto;
             transition: transform 0.1s;
-            animation: floatUp1993 3s linear forwards;
-            box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
+            animation: floatUp1993 3.5s linear forwards;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25), inset 0 0 10px rgba(255,255,255,0.8);
+            display: flex; align-items: center; justify-content: center;
         }
-        .bubble-1993:active { transform: scale(0.8); }
+        .bubble-1993:active { transform: scale(0.85); }
 
         @keyframes floatUp1993 {
-            from { bottom: -50px; transform: scale(0.5); opacity: 0; }
-            10% { opacity: 1; transform: scale(1); }
-            90% { opacity: 1; }
-            100% { bottom: 100%; opacity: 0; }
+            from { bottom: -70px; transform: scale(0.6); opacity: 0; }
+            8% { opacity: 1; transform: scale(1); }
+            92% { opacity: 1; }
+            100% { bottom: 105%; opacity: 0; }
         }
 
         /* 1994 MINIGAME CSS */
@@ -5533,6 +5534,7 @@
         
         <div class="house-bg-1993">🏠</div>
         <div class="water-layer-1993" id="water-layer-1993"></div>
+        <div id="bubble-container-1993" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; overflow: hidden;"></div>
         
         <div class="retro-modal" id="win-modal-1993" style="z-index: 50;">
             <h2>Het waterpeil is gedaald!</h2>
@@ -6775,6 +6777,8 @@
             if (y === 1993) {
                 isPlaying1993 = false;
                 clearInterval(spawnInterval1993);
+                const bubbleContainer = document.getElementById('bubble-container-1993');
+                if (bubbleContainer) bubbleContainer.innerHTML = '';
             }
             if (y === 1994) {
                 isPlaying1994 = false;
@@ -12539,26 +12543,30 @@
             document.getElementById('win-modal-1993').classList.remove('active');
             
             const waterLayer = document.getElementById('water-layer-1993');
-            waterLayer.style.height = '100%';
-            waterLayer.innerHTML = '';
+            if (waterLayer) {
+                waterLayer.style.height = '100%';
+                waterLayer.innerHTML = '';
+            }
+            
+            const bubbleContainer = document.getElementById('bubble-container-1993');
+            if (bubbleContainer) bubbleContainer.innerHTML = '';
             
             document.getElementById('game-overlay-1993').classList.add('active');
             
             clearInterval(spawnInterval1993);
-            spawnInterval1993 = setInterval(spawnBubble1993, 300);
+            spawnInterval1993 = setInterval(spawnBubble1993, 260);
         }
         
         function spawnBubble1993() {
             if (!isPlaying1993 || score1993 >= TARGET_SCORE_1993) return;
             
+            const bubbleContainer = document.getElementById('bubble-container-1993') || document.getElementById('game-overlay-1993');
             const waterLayer = document.getElementById('water-layer-1993');
-            // If water is low, don't spawn as much
-            if (parseInt(waterLayer.style.height) < 10) return;
 
             const el = document.createElement('div');
             el.className = 'bubble-1993';
             
-            const x = 5 + Math.random() * 80;
+            const x = 5 + Math.random() * 82;
             el.style.left = x + '%';
             
             const clickHandler = (e) => {
@@ -12573,7 +12581,7 @@
                 document.getElementById('score-1993').innerText = `Liter water weggepompt: ${score1993} / ${TARGET_SCORE_1993}`;
                 
                 const waterPercent = Math.max(0, 100 - (score1993 / TARGET_SCORE_1993 * 100));
-                waterLayer.style.height = waterPercent + '%';
+                if (waterLayer) waterLayer.style.height = waterPercent + '%';
                 
                 if (score1993 >= TARGET_SCORE_1993) {
                     winMinigame1993();
@@ -12583,20 +12591,25 @@
             el.addEventListener('mousedown', clickHandler);
             el.addEventListener('touchstart', clickHandler, { passive: false });
             
-            waterLayer.appendChild(el);
+            bubbleContainer.appendChild(el);
             
             setTimeout(() => {
-                if (el.parentNode === waterLayer) el.remove();
-            }, 3000);
+                if (el.parentNode === bubbleContainer) el.remove();
+            }, 3600);
         }
         
         function winMinigame1993() {
             isPlaying1993 = false;
             clearInterval(spawnInterval1993);
+            completeGame(1993);
             
             const waterLayer = document.getElementById('water-layer-1993');
-            waterLayer.style.height = '0%';
-            waterLayer.innerHTML = '';
+            if (waterLayer) {
+                waterLayer.style.height = '0%';
+                waterLayer.innerHTML = '';
+            }
+            const bubbleContainer = document.getElementById('bubble-container-1993');
+            if (bubbleContainer) bubbleContainer.innerHTML = '';
             
             setTimeout(() => {
                 document.getElementById('win-modal-1993').classList.add('active');
