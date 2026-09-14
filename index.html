@@ -4526,7 +4526,7 @@
 <body>
 
     <header>
-        <a href="/75JAAR.stl" download="75JAAR.stl" id="reward-btn" class="retro-btn" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 1000; background: #f1c40f; color: #111; font-weight: bold; border: 3px solid #d35400; text-decoration: none; animation: pulse-gold 2s infinite;">🏆 BELONING</a>
+        <a href="/75JAAR.stl" download="75JAAR.stl" id="reward-btn" class="retro-btn" onclick="openCelebrationModal(event)" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 1000; background: #f1c40f; color: #111; font-weight: bold; border: 3px solid #d35400; text-decoration: none; animation: pulse-gold 2s infinite;">PRIJS</a>
         <h1 class="header-title" id="scoreboard">Geverifieerde Leeftijd: <span id="age-counter">-</span> / 75</h1>
         <div class="progress-container">
             <div class="progress-bar" id="progress-bar"></div>
@@ -6477,10 +6477,19 @@
 
     <!-- Final Celebration Modal -->
     <div class="modal-overlay" id="celebration-modal">
-        <div class="modal-content">
-            <h2 class="modal-title">Gefeliciteerd! 🥂</h2>
-            <p class="modal-text">Je hebt alle 76 mini-games uitgespeeld en officieel bewezen dat je de respectabele, prachtige leeftijd van 76 jaar hebt bereikt. Op naar de volgende mijlpaal!</p>
-            <button class="modal-btn" onclick="closeModal()">Proost!</button>
+        <div class="modal-content" style="max-width: 620px; padding: 45px 30px; text-align: center;">
+            <div style="font-size: 3.5rem; margin-bottom: 12px; line-height: 1;">🏆</div>
+            <p class="modal-text" style="font-size: clamp(1.2rem, 3.8vw, 1.45rem); font-weight: 700; color: #FFF; line-height: 1.5; margin-bottom: 28px; text-shadow: 0 2px 8px rgba(0,0,0,0.6);">
+                Gefeliciteerd! Je hebt bewezen dat je ECHT 75 jaar bent, fantastisch! Download je prijs!
+            </p>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 14px;">
+                <a href="/75JAAR.stl" download="75JAAR.stl" id="modal-prize-btn" class="modal-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-size: 1.5rem; font-weight: 800; padding: 16px 52px; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #000; border-radius: 14px; border: 3px solid #FFF; box-shadow: 0 0 25px rgba(255, 215, 0, 0.75), 0 8px 18px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
+                    PRIJS
+                </a>
+                <button class="modal-btn" onclick="closeModal()" style="background: transparent; color: #94A3B8; border: 1px solid rgba(148, 163, 184, 0.35); box-shadow: none; font-size: 0.95rem; font-weight: 600; padding: 8px 24px; border-radius: 8px; cursor: pointer;">
+                    Sluiten
+                </button>
+            </div>
         </div>
     </div>
 
@@ -16852,12 +16861,16 @@
             }
 
             // Trigger Final Celebration
-            if (completedCount === TOTAL_YEARS && animateEvents) {
+            if (completedCount >= TOTAL_YEARS && animateEvents) {
                 setTimeout(() => {
                     triggerGrandConfetti();
                     modal.classList.add('active');
                 }, 800);
             }
+        }
+
+        function openCelebrationModal(e) {
+            if (modal) modal.classList.add('active');
         }
 
         // Epic Confetti Explosion
